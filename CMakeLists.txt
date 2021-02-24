@@ -1,31 +1,33 @@
 cmake_minimum_required(VERSION 3.16)
 project(Project_LightBoard)
 
+#Compiler Options
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 set(CMAKE_HAVE_THREADS_LIBRARY 1)
 set(CMAKE_USE_WIN32_THREADS_INIT 0)
 set(CMAKE_USE_PTHREADS_INIT 1)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
-string(APPEND CMAKE_CXX_FLAGS " -std=c++11 -stdlib=libc++")
+string(APPEND CMAKE_CXX_FLAGS " -std=c++11 -stdlib=libc++  -Ofast")
 string(APPEND CMAKE_EXE_LINKER_FLAGS " -stdlib=libc++ -lc++abi")
-execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=lld -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
-if ("${LD_VERSION}" MATCHES "LLD")
-    string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=lld")
-    string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=lld")
-    string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=lld")
-endif ()
+string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=lld")
+string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=lld")
+string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=lld")
+
+#CCache
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
 endif(CCACHE_FOUND)
+
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 
 #Enable Opts
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSSE.cmake")
 CHECK_FOR_SSE()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SSE_FLAGS_STR} -Ofast")
+string(APPEND CMAKE_CXX_FLAGS " ${SSE_FLAGS_STR}")
 
 add_executable(Project_LightBoard Engine/main.cpp Engine/Render/renderManager.cpp Engine/Render/renderManager.h Engine/Render/windowManager.cpp Engine/Render/windowManager.h Engine/Render/Vulkan/vulkanManager.cpp Engine/Render/Vulkan/vulkanManager.h Engine/Render/Vulkan/vulkanDebugManager.cpp Engine/Render/Vulkan/vulkanDebugManager.h Engine/Render/Vulkan/vulkanPhysicalDeviceManager.cpp Engine/Render/Vulkan/vulkanPhysicalDeviceManager.h Engine/Render/Vulkan/vulkanQueueManager.cpp Engine/Render/Vulkan/vulkanQueueManager.h Engine/Render/Vulkan/vulkanLogicalDeviceManager.cpp Engine/Render/Vulkan/vulkanLogicalDeviceManager.h)
 
