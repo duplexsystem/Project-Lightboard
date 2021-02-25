@@ -6,14 +6,17 @@
 #define PROJECT_LIGHTBOARD_VULKANLOGICALDEVICEMANAGER_H
 
 #include <vulkan/vulkan.h>
+#include <vector>
 
 class vulkanLogicalDeviceManager {
     public:
+        static const std::vector<const char*> deviceExtensions;
+
         static VkDevice device;
 
-        static void initLogicalDevice();
+        static void initDevice();
 
-        static void cleanupLogicalDevice();
+        static void cleanupDevice();
 };
 
 

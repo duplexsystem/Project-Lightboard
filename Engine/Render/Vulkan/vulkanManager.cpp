@@ -6,6 +6,7 @@
 #include "vulkanDebugManager.h"
 #include "vulkanPhysicalDeviceManager.h"
 #include "vulkanLogicalDeviceManager.h"
+#include "vulkanSurfaceManager.h"
 
 #include <vulkan/vulkan.h>
 #include <stdexcept>
@@ -14,15 +15,26 @@ VkInstance vulkanManager :: instance;
 
 void vulkanManager :: initVulkan() {
     createInstance();
+
     vulkanDebugManager::initDebugMessenger();
+
+    vulkanSurfaceManager::initSurface();
+
     vulkanPhysicalDeviceManager::initPhysicalDevice();
-    vulkanLogicalDeviceManager::initLogicalDevice();
+
+    vulkanLogicalDeviceManager::initDevice();
+
+    vulkanSwapChainManager::initSwapChain();
 }
 
 void vulkanManager :: cleanupVulkan() {
-    vulkanLogicalDeviceManager::cleanupLogicalDevice();
+    vulkanSwapChainManager::cleanupSwapChain();
+
+    vulkanLogicalDeviceManager::cleanupDevice();
 
     vulkanDebugManager::cleanupDebugMessenger();
+
+    vulkanSurfaceManager::cleanupSurface();
 
     vkDestroyInstance(instance, nullptr);
 }
@@ -45,6 +57,9 @@ void vulkanManager :: createInstance() {
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
 
+        auto extensions = vulkanPhysicalDeviceManager::getRequiredPhysicalExtensions();
+        createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+        createInfo.ppEnabledExtensionNames = extensions.data();
 
         VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
         if (vulkanDebugManager::enableValidationLayers) {
@@ -58,10 +73,6 @@ void vulkanManager :: createInstance() {
 
             createInfo.pNext = nullptr;
         }
-
-        auto extensions = vulkanPhysicalDeviceManager::getRequiredExtensions();
-        createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-        createInfo.ppEnabledExtensionNames = extensions.data();
 
         if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
             throw std::runtime_error("failed to create instance!");

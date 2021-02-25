@@ -3,11 +3,15 @@
 //
 
 #include "vulkanQueueManager.h"
+#include "vulkanSurfaceManager.h"
+#include "vulkanPhysicalDeviceManager.h"
 
 #include <vulkan/vulkan.h>
 #include <vector>
+#include <set>
 
 VkQueue vulkanQueueManager :: graphicsQueue;
+VkQueue vulkanQueueManager :: presentQueue;
 
 QueueFamilyIndices vulkanQueueManager :: findQueueFamilies(VkPhysicalDevice device) {
     QueueFamilyIndices indices;
@@ -24,6 +28,13 @@ QueueFamilyIndices vulkanQueueManager :: findQueueFamilies(VkPhysicalDevice devi
             indices.graphicsFamily = i;
         }
 
+        VkBool32 presentSupport = false;
+        vkGetPhysicalDeviceSurfaceSupportKHR(device, i, vulkanSurfaceManager::surface, &presentSupport);
+
+        if (presentSupport) {
+            indices.presentFamily = i;
+        }
+
         if (indices.isComplete()) {
             break;
         }
@@ -32,4 +43,20 @@ QueueFamilyIndices vulkanQueueManager :: findQueueFamilies(VkPhysicalDevice devi
     }
 
     return indices;
+}
+
+void vulkanQueueManager :: initQueueFamilies(QueueFamilyIndices &indices, std::vector<VkDeviceQueueCreateInfo> &queueCreateInfos, std::set<uint32_t> &uniqueQueueFamilies) {
+    indices = findQueueFamilies(vulkanPhysicalDeviceManager::physicalDevice);
+
+    uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+
+    float queuePriority = 1.0f;
+    for (uint32_t queueFamily : uniqueQueueFamilies) {
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = queueFamily;
+        queueCreateInfo.queueCount = 1;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+        queueCreateInfos.push_back(queueCreateInfo);
+    }
 }

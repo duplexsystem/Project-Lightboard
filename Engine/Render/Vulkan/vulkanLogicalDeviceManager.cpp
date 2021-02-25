@@ -12,28 +12,30 @@
 
 VkDevice vulkanLogicalDeviceManager :: device;
 
-void vulkanLogicalDeviceManager :: initLogicalDevice() {
-    QueueFamilyIndices indices = vulkanQueueManager::findQueueFamilies(vulkanPhysicalDeviceManager::physicalDevice);
+const std::vector<const char*> vulkanLogicalDeviceManager :: deviceExtensions = {
+        VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
 
-    VkDeviceQueueCreateInfo queueCreateInfo{};
-    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-    queueCreateInfo.queueCount = 1;
+void vulkanLogicalDeviceManager :: initDevice() {
+    QueueFamilyIndices indices;
 
-    float queuePriority = 1.0f;
-    queueCreateInfo.pQueuePriorities = &queuePriority;
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+    std::set<uint32_t> uniqueQueueFamilies;
+
+    vulkanQueueManager :: initQueueFamilies(indices, queueCreateInfos, uniqueQueueFamilies);
 
     VkPhysicalDeviceFeatures deviceFeatures{};
 
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-    createInfo.pQueueCreateInfos = &queueCreateInfo;
-    createInfo.queueCreateInfoCount = 1;
+    createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+    createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
     createInfo.pEnabledFeatures = &deviceFeatures;
 
-    createInfo.enabledExtensionCount = 0;
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+    createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
     if (vulkanDebugManager::enableValidationLayers) {
         createInfo.enabledLayerCount = static_cast<uint32_t>(vulkanDebugManager::validationLayers.size());
@@ -47,8 +49,9 @@ void vulkanLogicalDeviceManager :: initLogicalDevice() {
     }
 
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &vulkanQueueManager::graphicsQueue);
+    vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &vulkanQueueManager::presentQueue);
 }
 
-void vulkanLogicalDeviceManager :: cleanupLogicalDevice() {
+void vulkanLogicalDeviceManager :: cleanupDevice() {
     vkDestroyDevice(device, nullptr);
 }

@@ -10,8 +10,7 @@
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
-GLFWwindow* window;
-
+GLFWwindow* windowManager :: window;
 
 void windowManager :: initWindow() {
     glfwInit();
@@ -22,7 +21,7 @@ void windowManager :: initWindow() {
     window = glfwCreateWindow(WIDTH, HEIGHT, "Project Lightboard", nullptr, nullptr);
 }
 
-const char** windowManager :: getWindowExtents(uint32_t glfwExtensionCount) {
+const char** windowManager :: getWindowExtents(uint32_t &glfwExtensionCount) {
     return glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 }
 

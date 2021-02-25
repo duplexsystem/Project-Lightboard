@@ -8,6 +8,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <cstdint>
+#include "vulkanSwapChainManager.h"
 
 class vulkanPhysicalDeviceManager {
     public:
@@ -15,7 +16,11 @@ class vulkanPhysicalDeviceManager {
 
         static bool checkValidationLayerSupport();
 
-        static std::vector<const char*> getRequiredExtensions();
+        static std::vector<const char*> getRequiredPhysicalExtensions();
+
+        static bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+
+        static SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
         static void initPhysicalDevice();
 

@@ -6,6 +6,9 @@
 #include "vulkanDebugManager.h"
 #include "../windowManager.h"
 #include "vulkanQueueManager.h"
+#include "vulkanLogicalDeviceManager.h"
+#include "vulkanSwapChainManager.h"
+#include "vulkanSurfaceManager.h"
 
 #include <vulkan/vulkan.h>
 #include <stdexcept>
@@ -41,7 +44,7 @@ bool vulkanPhysicalDeviceManager :: checkValidationLayerSupport() {
     return true;
 }
 
-std::vector<const char*> vulkanPhysicalDeviceManager :: getRequiredExtensions() {
+std::vector<const char*> vulkanPhysicalDeviceManager :: getRequiredPhysicalExtensions() {
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions;
     glfwExtensions = windowManager::getWindowExtents(glfwExtensionCount);
@@ -53,6 +56,46 @@ std::vector<const char*> vulkanPhysicalDeviceManager :: getRequiredExtensions() 
     }
 
     return extensions;
+}
+
+bool vulkanPhysicalDeviceManager :: checkDeviceExtensionSupport(VkPhysicalDevice device) {
+    uint32_t extensionCount;
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+
+    std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+    std::set<std::string> requiredExtensions(vulkanLogicalDeviceManager::deviceExtensions.begin(), vulkanLogicalDeviceManager::deviceExtensions.end());
+
+    for (const auto& extension : availableExtensions) {
+        requiredExtensions.erase(extension.extensionName);
+    }
+
+    return requiredExtensions.empty();
+}
+
+SwapChainSupportDetails vulkanPhysicalDeviceManager :: querySwapChainSupport(VkPhysicalDevice device) {
+    SwapChainSupportDetails details;
+
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, vulkanSurfaceManager::surface, &details.capabilities);
+
+    uint32_t formatCount;
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, vulkanSurfaceManager::surface, &formatCount, nullptr);
+
+    if (formatCount != 0) {
+        details.formats.resize(formatCount);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, vulkanSurfaceManager::surface, &formatCount, details.formats.data());
+    }
+
+    uint32_t presentModeCount;
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, vulkanSurfaceManager::surface, &presentModeCount, nullptr);
+
+    if (presentModeCount != 0) {
+        details.presentModes.resize(presentModeCount);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, vulkanSurfaceManager::surface, &presentModeCount, details.presentModes.data());
+    }
+
+    return details;
 }
 
 int vulkanPhysicalDeviceManager :: rateDeviceSuitability(VkPhysicalDevice device) {
@@ -71,8 +114,17 @@ int vulkanPhysicalDeviceManager :: rateDeviceSuitability(VkPhysicalDevice device
     // Maximum possible size of textures affects graphics quality
     score += deviceProperties.limits.maxImageDimension2D;
 
-    // Application can't function without geometry shaders or the required Queue Families
-    if (!deviceFeatures.geometryShader || !vulkanQueueManager::findQueueFamilies(device).isComplete()) {
+
+    bool extensionsSupported = checkDeviceExtensionSupport(device);
+
+    bool swapChainAdequate = false;
+    if (extensionsSupported) {
+        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
+        swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+    }
+
+    // Application can't function without geometry shaders or the required Queue Families or required extensions or adequate spawn chain support
+    if (!deviceFeatures.geometryShader || !vulkanQueueManager::findQueueFamilies(device).isComplete() || !extensionsSupported || !swapChainAdequate) {
         return 0;
     }
 

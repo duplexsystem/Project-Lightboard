@@ -2,17 +2,17 @@ cmake_minimum_required(VERSION 3.16)
 project(Project_LightBoard)
 
 #Compiler Options
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 set(CMAKE_HAVE_THREADS_LIBRARY 1)
 set(CMAKE_USE_WIN32_THREADS_INIT 0)
 set(CMAKE_USE_PTHREADS_INIT 1)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
-string(APPEND CMAKE_CXX_FLAGS " -std=c++11 -stdlib=libc++  -Ofast")
-string(APPEND CMAKE_EXE_LINKER_FLAGS " -stdlib=libc++ -lc++abi")
-string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=lld")
-string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=lld")
-string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=lld")
+string(APPEND CMAKE_CXX_FLAGS " -Ofast -m64")
+string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=lld -m64")
+string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=lld -m64")
+string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=lld -m64")
+set(ARCH amd64)
 
 #CCache
 find_program(CCACHE_FOUND ccache)
@@ -29,7 +29,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSSE.cmake")
 CHECK_FOR_SSE()
 string(APPEND CMAKE_CXX_FLAGS " ${SSE_FLAGS_STR}")
 
-add_executable(Project_LightBoard Engine/main.cpp Engine/Render/renderManager.cpp Engine/Render/renderManager.h Engine/Render/windowManager.cpp Engine/Render/windowManager.h Engine/Render/Vulkan/vulkanManager.cpp Engine/Render/Vulkan/vulkanManager.h Engine/Render/Vulkan/vulkanDebugManager.cpp Engine/Render/Vulkan/vulkanDebugManager.h Engine/Render/Vulkan/vulkanPhysicalDeviceManager.cpp Engine/Render/Vulkan/vulkanPhysicalDeviceManager.h Engine/Render/Vulkan/vulkanQueueManager.cpp Engine/Render/Vulkan/vulkanQueueManager.h Engine/Render/Vulkan/vulkanLogicalDeviceManager.cpp Engine/Render/Vulkan/vulkanLogicalDeviceManager.h)
+add_executable(Project_LightBoard Engine/main.cpp Engine/Render/renderManager.cpp Engine/Render/renderManager.h Engine/Render/windowManager.cpp Engine/Render/windowManager.h Engine/Render/Vulkan/vulkanManager.cpp Engine/Render/Vulkan/vulkanManager.h Engine/Render/Vulkan/vulkanDebugManager.cpp Engine/Render/Vulkan/vulkanDebugManager.h Engine/Render/Vulkan/vulkanPhysicalDeviceManager.cpp Engine/Render/Vulkan/vulkanPhysicalDeviceManager.h Engine/Render/Vulkan/vulkanQueueManager.cpp Engine/Render/Vulkan/vulkanQueueManager.h Engine/Render/Vulkan/vulkanLogicalDeviceManager.cpp Engine/Render/Vulkan/vulkanLogicalDeviceManager.h Engine/Render/Vulkan/vulkanSurfaceManager.cpp Engine/Render/Vulkan/vulkanSurfaceManager.h Engine/Render/Vulkan/vulkanSwapChainManager.cpp Engine/Render/Vulkan/vulkanSwapChainManager.h)
 
 #LTO
 set_property(TARGET Project_LightBoard PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
