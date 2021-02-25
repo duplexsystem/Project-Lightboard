@@ -56,6 +56,14 @@ target_link_libraries(Project_LightBoard glfw)
 find_package(Vulkan REQUIRED FATAL_ERROR)
 target_link_libraries(Project_LightBoard vulkan)
 
+#Vk-bootstrap
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/vk-bootstrap)
+target_link_libraries(Project_LightBoard vk-bootstrap)
+
+#Vk-bootstrap
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/VulkanMemoryAllocator)
+target_link_libraries(Project_LightBoard VulkanMemoryAllocator)
+
 #SPIRV-Headers
 set(SPIRV_HEADERS_SKIP_EXAMPLES ON CACHE BOOL "" FORCE)
 

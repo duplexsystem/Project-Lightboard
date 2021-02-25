@@ -16,3 +16,9 @@
 [submodule "glslang"]
 	path = libs/glslang
 	url = https://github.com/KhronosGroup/glslang.git
+[submodule "vk-bootstrap"]
+	path = libs/vk-bootstrap
+	url = https://github.com/charles-lunarg/vk-bootstrap.git
+[submodule "VulkanMemoryAllocator"]
+	path = libs/VulkanMemoryAllocator
+	url = https://github.com/cpp-pm/VulkanMemoryAllocator.git
