@@ -21,4 +21,4 @@
 	url = https://github.com/charles-lunarg/vk-bootstrap.git
 [submodule "VulkanMemoryAllocator"]
 	path = libs/VulkanMemoryAllocator
-	url = https://github.com/cpp-pm/VulkanMemoryAllocator.git
+	url = https://github.com/duplexsystem/VulkanMemoryAllocator.git
