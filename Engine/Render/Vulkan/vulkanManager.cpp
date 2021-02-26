@@ -31,8 +31,6 @@ std::vector<VkImageView> vulkanManager :: swapChainImageViews;
 
 void vulkanManager :: initVulkan() {
     vulkanBoilerplateManager::initBoilerplate();
-
-    vulkanImageViewManager::initImageViews();
 }
 
 void vulkanManager :: cleanupVulkan() {
