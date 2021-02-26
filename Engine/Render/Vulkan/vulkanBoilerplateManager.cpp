@@ -50,8 +50,7 @@ void vulkanBoilerplateManager :: initBoilerplate() {
     instanceBuilder.set_app_name("Project Lightboard")
             .set_engine_name("Project Lightboard")
             .require_api_version(1,0,0)
-            .desire_api_version(1,1,0)
-            .build();
+            .desire_api_version(1,1,0);
     auto instanceBuilderReturn = instanceBuilder.build();
     if (!instanceBuilderReturn) {
         throw std::runtime_error("Failed to create Vulkan instance. Error: " + instanceBuilderReturn.error().message() + "\n");
