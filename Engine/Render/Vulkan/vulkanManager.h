@@ -27,14 +27,6 @@ class vulkanManager {
 
         static VkSwapchainKHR swapChain;
 
-        static std::vector<VkImage> swapChainImages;
-
-        static VkFormat swapChainImageFormat;
-
-        static VkExtent2D swapChainExtent;
-
-        static std::vector<VkImageView> swapChainImageViews;
-
         static void initVulkan();
 
         static void cleanupVulkan();

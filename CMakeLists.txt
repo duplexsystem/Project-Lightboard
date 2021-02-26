@@ -30,7 +30,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSSE.cmake")
 CHECK_FOR_SSE()
 string(APPEND CMAKE_CXX_FLAGS " ${SSE_FLAGS_STR}")
 
-add_executable(Project_LightBoard Engine/main.cpp Engine/Render/renderManager.cpp Engine/Render/renderManager.h Engine/Render/windowManager.cpp Engine/Render/windowManager.h Engine/Render/Vulkan/vulkanManager.cpp Engine/Render/Vulkan/vulkanManager.h Engine/Render/Vulkan/vulkanDebugUtils.cpp Engine/Render/Vulkan/vulkanDebugUtils.h Engine/Render/Vulkan/vulkanBoilerplateManager.cpp Engine/Render/Vulkan/vulkanBoilerplateManager.h)
+add_executable(Project_LightBoard Engine/main.cpp Engine/Render/renderManager.cpp Engine/Render/renderManager.h Engine/Render/windowManager.cpp Engine/Render/windowManager.h Engine/Render/Vulkan/vulkanManager.cpp Engine/Render/Vulkan/vulkanManager.h Engine/Render/Vulkan/vulkanDebugUtils.cpp Engine/Render/Vulkan/vulkanDebugUtils.h Engine/Render/Vulkan/vulkanBoilerplateManager.cpp Engine/Render/Vulkan/vulkanBoilerplateManager.h Engine/Render/Vulkan/vulkanImageViewManager.cpp Engine/Render/Vulkan/vulkanImageViewManager.h)
 
 #LTO
 set_property(TARGET Project_LightBoard PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)

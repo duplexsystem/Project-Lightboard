@@ -5,6 +5,7 @@
 #include "vulkanBoilerplateManager.h"
 #include "vulkanDebugUtils.h"
 #include "../windowManager.h"
+#include "vulkanImageViewManager.h"
 
 #include <vulkan/vulkan.h>
 #include <VkBootstrap.h>
@@ -106,11 +107,9 @@ void vulkanBoilerplateManager :: initBoilerplate() {
     }
     vkbSwapChain = swapChainReturn.value();
     vulkanManager::swapChain = vkbSwapChain.swapchain;
-    vulkanManager::swapChainImages = vkbSwapChain.get_images().value();
-    vulkanManager::swapChainImageFormat = vkbSwapChain.image_format;
-    vulkanManager::swapChainExtent = vkbSwapChain.extent;
-    vulkanManager::swapChainImageViews = vkbSwapChain.get_image_views().value();
-
+    vulkanImageViewManager::swapChainImages = vkbSwapChain.get_images().value();
+    vulkanImageViewManager::swapChainImageFormat = vkbSwapChain.image_format;
+    vulkanImageViewManager::swapChainExtent = vkbSwapChain.extent;
 }
 
 void vulkanBoilerplateManager :: cleanupBoilerplate() {
