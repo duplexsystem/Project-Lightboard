@@ -38,7 +38,10 @@ void vulkanBoilerplateManager :: initBoilerplate() {
     // Nothing to do if no debug
 #else
     instanceBuilder.request_validation_layers();
-    for (auto layer : vulkanDebugUtils::validationLayers) {
+    for
+            
+            
+            auto layer : vulkanDebugUtils::validationLayers) {
         instanceBuilder.enable_layer(layer);
     }
     instanceBuilder
@@ -65,7 +68,7 @@ void vulkanBoilerplateManager :: initBoilerplate() {
         throw std::runtime_error("Failed to create Surface. Error: " + std::string(vulkanDebugUtils::to_string(surfaceReturn)) + "\n");
     }
 
-    vkb::PhysicalDeviceSelector physicalDeviceSelector (vkbInstance);
+    vkb::PhysicalDeviceSelector physicalDeviceSelector(vkbInstance);
     auto physicalDeviceSelectorReturn = physicalDeviceSelector.set_surface(vulkanManager::surface)
             .add_required_extensions(neededDeviceExtensions)
             .add_desired_extensions(desiredDeviceExtensions)
@@ -99,13 +102,13 @@ void vulkanBoilerplateManager :: initBoilerplate() {
     vkbDevice = deviceReturn.value();
     vulkanManager::device = vkbDevice.device;
 
-    auto graphicsQueueReturn = vkbDevice.get_queue (vkb::QueueType::graphics);
+    auto graphicsQueueReturn = vkbDevice.get_queue(vkb::QueueType::graphics);
     if (!graphicsQueueReturn) {
         throw std::runtime_error("Failed to create Graphics queue. Error: " + std::string(graphicsQueueReturn.error().message()) + "\n");
     }
     vulkanManager::graphicsQueue = graphicsQueueReturn.value();
 
-    auto presentQueueReturn = vkbDevice.get_queue (vkb::QueueType::present);
+    auto presentQueueReturn = vkbDevice.get_queue(vkb::QueueType::present);
     if (!presentQueueReturn) {
         throw std::runtime_error("Failed to create Present queue. Error: " + std::string(presentQueueReturn.error().message()) + "\n");
     }
