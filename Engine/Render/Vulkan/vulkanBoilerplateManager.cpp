@@ -38,10 +38,7 @@ void vulkanBoilerplateManager :: initBoilerplate() {
     // Nothing to do if no debug
 #else
     instanceBuilder.request_validation_layers();
-    for
-            
-            
-            auto layer : vulkanDebugUtils::validationLayers) {
+    for (auto layer : vulkanDebugUtils::validationLayers) {
         instanceBuilder.enable_layer(layer);
     }
     instanceBuilder
