@@ -10,9 +10,9 @@ const std::vector<const char*>  vulkanDebugUtils :: validationLayers = {
         "VK_LAYER_KHRONOS_validation"
 };
 
-VkDebugUtilsMessengerEXT vulkanDebugUtils :: debugMessenger;
+VkDebugUtilsMessengerEXT vulkanDebugUtils :: debugMessenger = VK_NULL_HANDLE;
 
-VkAllocationCallbacks* vulkanDebugUtils :: allocationCallbacks;
+VkAllocationCallbacks* vulkanDebugUtils :: allocationCallbacks = VK_NULL_HANDLE;
 
 const char* vulkanDebugUtils :: to_string(VkResult r ){
     switch( r ){

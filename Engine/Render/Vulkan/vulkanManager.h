@@ -15,8 +15,6 @@ class vulkanManager {
 
         static VkSurfaceKHR surface;
 
-        static const std::vector<const char*> deviceExtensions;
-
         static VkPhysicalDevice physicalDevice;
 
         static VkDevice device;

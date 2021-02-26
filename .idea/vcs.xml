@@ -10,9 +10,11 @@
     <mapping directory="$PROJECT_DIR$/libs/SPIRV-Headers" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libs/SPIRV-Tools" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libs/SPIRV-Tools/external/re2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libs/VulkanMemoryAllocator" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libs/glfw" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libs/glm" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libs/glslang" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libs/shaderc" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libs/vk-bootstrap" vcs="Git" />
   </component>
 </project>

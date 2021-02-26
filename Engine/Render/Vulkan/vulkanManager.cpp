@@ -12,10 +12,6 @@ VkInstance vulkanManager :: instance;
 
 VkSurfaceKHR vulkanManager :: surface;
 
-const std::vector<const char*> vulkanManager :: deviceExtensions = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME
-};
-
 VkPhysicalDevice vulkanManager :: physicalDevice;
 
 VkDevice vulkanManager :: device;
