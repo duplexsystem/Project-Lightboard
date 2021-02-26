@@ -53,7 +53,7 @@ void vulkanBoilerplateManager :: initBoilerplate() {
             .desire_api_version(1,1,0);
     auto instanceBuilderReturn = instanceBuilder.build();
     if (!instanceBuilderReturn) {
-        throw std::runtime_error("Failed to create Vulkan instance. Error: " + instanceBuilderReturn.error().message() + "\n");
+        throw std::runtime_error("Failed to create Vulkan instance. Error: " + std::string(instanceBuilderReturn.error().message()) + "\n");
     }
     vkbInstance = instanceBuilderReturn.value();
     vulkanManager::instance = vkbInstance.instance;
