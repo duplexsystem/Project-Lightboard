@@ -14,8 +14,6 @@ class vulkanDebugUtils {
 
         static VkDebugUtilsMessengerEXT debugMessenger;
 
-        static VkAllocationCallbacks* allocationCallbacks;
-
         static const char* to_string( VkResult r );
 
         static const char* to_string( VkDebugReportObjectTypeEXT o);
