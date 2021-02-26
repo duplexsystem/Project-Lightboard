@@ -12,9 +12,20 @@
 
 vkb::Instance vulkanBoilerplateManager :: vkbInstance;
 
-const std::vector<const char*> vulkanBoilerplateManager :: deviceExtensions = {
+const char* neededDeviceExtensionsList[] = {
         VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
+const std::vector<const char*> vulkanBoilerplateManager :: neededDeviceExtensions = {std::begin(neededDeviceExtensionsList), std::end(neededDeviceExtensionsList)};
+
+const char* desiredDeviceExtensionsList[] = {
+        VK_EXT_MEMORY_BUDGET_EXTENSION_NAME,
+        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
+        VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME,
+        VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME,
+        VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME,
+        VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME
+};
+const std::vector<const char*> vulkanBoilerplateManager :: desiredDeviceExtensions = {std::begin(desiredDeviceExtensionsList), std::end(desiredDeviceExtensionsList)};
 
 vkb::PhysicalDevice vulkanBoilerplateManager :: vkbPhysicalDevice;
 
@@ -41,6 +52,7 @@ void vulkanBoilerplateManager :: initBoilerplate() {
     instanceBuilder.set_app_name("Project Lightboard")
             .set_engine_name("Project Lightboard")
             .require_api_version(1,0,0)
+            .desire_api_version(1,1,0)
             .build();
     auto instanceBuilderReturn = instanceBuilder.build();
     if (!instanceBuilderReturn) {
@@ -57,7 +69,8 @@ void vulkanBoilerplateManager :: initBoilerplate() {
 
     vkb::PhysicalDeviceSelector physicalDeviceSelector (vkbInstance);
     auto physicalDeviceSelectorReturn = physicalDeviceSelector.set_surface(vulkanManager::surface)
-            .add_required_extensions(deviceExtensions)
+            .add_required_extensions(neededDeviceExtensions)
+            .add_desired_extensions(desiredDeviceExtensions)
             .select();
     if (!physicalDeviceSelectorReturn) {
         throw std::runtime_error("Failed to select Device. Error: " + std::string(physicalDeviceSelectorReturn.error().message()) + "\n");

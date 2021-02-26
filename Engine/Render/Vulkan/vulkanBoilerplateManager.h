@@ -11,7 +11,9 @@ class vulkanBoilerplateManager {
     public:
         static vkb::Instance vkbInstance;
 
-        static const std::vector<const char*> deviceExtensions;
+        static const std::vector<const char*> neededDeviceExtensions;
+
+        static const std::vector<const char*> desiredDeviceExtensions;
 
         static vkb::PhysicalDevice vkbPhysicalDevice;
 
