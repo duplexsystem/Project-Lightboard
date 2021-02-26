@@ -4,7 +4,6 @@
 
 #include "vulkanManager.h"
 #include "vulkanBoilerplateManager.h"
-#include "vulkanImageViewManager.h"
 
 #include <vulkan/vulkan.h>
 #include <VkBootstrap.h>
@@ -25,6 +24,10 @@ VkQueue vulkanManager :: graphicsQueue;
 VkQueue vulkanManager :: presentQueue;
 
 VkSwapchainKHR vulkanManager :: swapChain;
+std::vector<VkImage> vulkanManager :: swapChainImages;
+VkFormat vulkanManager :: swapChainImageFormat;
+VkExtent2D vulkanManager :: swapChainExtent;
+std::vector<VkImageView> vulkanManager :: swapChainImageViews;
 
 void vulkanManager :: initVulkan() {
     vulkanBoilerplateManager::initBoilerplate();
@@ -33,13 +36,7 @@ void vulkanManager :: initVulkan() {
 }
 
 void vulkanManager :: cleanupVulkan() {
-    vulkanImageViewManager::cleanupImageView();
-
     vulkanBoilerplateManager::cleanupBoilerplate();
-
-    vkDestroySurfaceKHR(instance, surface, nullptr);
-
-    vulkanBoilerplateManager::cleanupInstance();
 }
 
 

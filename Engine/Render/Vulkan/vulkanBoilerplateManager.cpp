@@ -5,27 +5,25 @@
 #include "vulkanBoilerplateManager.h"
 #include "vulkanDebugUtils.h"
 #include "../windowManager.h"
-#include "vulkanImageViewManager.h"
 
 #include <vulkan/vulkan.h>
 #include <VkBootstrap.h>
 
 vkb::Instance vulkanBoilerplateManager :: vkbInstance;
 
-const char* neededDeviceExtensionsList[] = {
+const std::vector<const char*> vulkanBoilerplateManager :: neededDeviceExtensions{
         VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
-const std::vector<const char*> vulkanBoilerplateManager :: neededDeviceExtensions = {std::begin(neededDeviceExtensionsList), std::end(neededDeviceExtensionsList)};
-
-const char* desiredDeviceExtensionsList[] = {
+const std::vector<const char*> vulkanBoilerplateManager :: desiredDeviceExtensions{
         VK_EXT_MEMORY_BUDGET_EXTENSION_NAME,
         VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
         VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME,
         VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME,
         VK_AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME,
-        VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME
+        VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME,
+        VK_EXT_MEMORY_BUDGET_EXTENSION_NAME,
+        VK_KHR_BIND_MEMORY_2_EXTENSION_NAME
 };
-const std::vector<const char*> vulkanBoilerplateManager :: desiredDeviceExtensions = {std::begin(desiredDeviceExtensionsList), std::end(desiredDeviceExtensionsList)};
 
 vkb::PhysicalDevice vulkanBoilerplateManager :: vkbPhysicalDevice;
 
@@ -120,17 +118,20 @@ void vulkanBoilerplateManager :: initBoilerplate() {
     }
     vkbSwapChain = swapChainReturn.value();
     vulkanManager::swapChain = vkbSwapChain.swapchain;
-    vulkanImageViewManager::swapChainImages = vkbSwapChain.get_images().value();
-    vulkanImageViewManager::swapChainImageFormat = vkbSwapChain.image_format;
-    vulkanImageViewManager::swapChainExtent = vkbSwapChain.extent;
+    vulkanManager::swapChainImages = vkbSwapChain.get_images().value();
+    vulkanManager::swapChainImageFormat = vkbSwapChain.image_format;
+    vulkanManager::swapChainExtent = vkbSwapChain.extent;
+    vulkanManager::swapChainImageViews = vkbSwapChain.get_image_views().value();
 }
 
 void vulkanBoilerplateManager :: cleanupBoilerplate() {
+    vkbSwapChain.destroy_image_views(vulkanManager::swapChainImageViews);
+
     vkb::destroy_swapchain(vkbSwapChain);
 
-    vkb::destroy_device(vkbDevice);
-}
+    vkDestroySurfaceKHR(vulkanManager::instance, vulkanManager::surface, nullptr);
 
-void vulkanBoilerplateManager :: cleanupInstance() {
+    vkb::destroy_device(vkbDevice);
+
     vkb::destroy_instance(vkbInstance);
 }

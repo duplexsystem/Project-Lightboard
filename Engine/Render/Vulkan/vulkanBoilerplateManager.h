@@ -24,8 +24,6 @@ class vulkanBoilerplateManager {
         static void initBoilerplate();
 
         static void cleanupBoilerplate();
-
-        static void cleanupInstance();
 };
 
 
