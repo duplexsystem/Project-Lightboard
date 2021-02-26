@@ -3,78 +3,46 @@
 //
 
 #include "vulkanManager.h"
-#include "vulkanDebugManager.h"
-#include "vulkanPhysicalDeviceManager.h"
-#include "vulkanLogicalDeviceManager.h"
-#include "vulkanSurfaceManager.h"
+#include "vulkanBoilerplateManager.h"
 
 #include <vulkan/vulkan.h>
-#include <stdexcept>
+#include <VkBootstrap.h>
 
 VkInstance vulkanManager :: instance;
 
+VkSurfaceKHR vulkanManager :: surface;
+
+const std::vector<const char*> vulkanManager :: deviceExtensions = {
+        VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
+
+VkPhysicalDevice vulkanManager :: physicalDevice;
+
+VkDevice vulkanManager :: device;
+
+VkQueue vulkanManager :: graphicsQueue;
+VkQueue vulkanManager :: presentQueue;
+
+VkSwapchainKHR vulkanManager :: swapChain;
+std::vector<VkImage> vulkanManager :: swapChainImages;
+VkFormat vulkanManager :: swapChainImageFormat;
+VkExtent2D vulkanManager :: swapChainExtent;
+std::vector<VkImageView> vulkanManager :: swapChainImageViews;
+
 void vulkanManager :: initVulkan() {
-    createInstance();
-
-    vulkanDebugManager::initDebugMessenger();
-
-    vulkanSurfaceManager::initSurface();
-
-    vulkanPhysicalDeviceManager::initPhysicalDevice();
-
-    vulkanLogicalDeviceManager::initDevice();
-
-    vulkanSwapChainManager::initSwapChain();
+    vulkanBoilerplateManager::initBoilerplate();
 }
 
 void vulkanManager :: cleanupVulkan() {
-    vulkanSwapChainManager::cleanupSwapChain();
+    for (auto imageView : swapChainImageViews) {
+        vkDestroyImageView(device, imageView, nullptr);
+    }
 
-    vulkanLogicalDeviceManager::cleanupDevice();
+    vulkanBoilerplateManager::cleanupBoilerplate();
 
-    vulkanDebugManager::cleanupDebugMessenger();
+    vkDestroySurfaceKHR(instance, surface, nullptr);
 
-    vulkanSurfaceManager::cleanupSurface();
-
-    vkDestroyInstance(instance, nullptr);
+    vulkanBoilerplateManager::cleanupInstance();
 }
 
 
-void vulkanManager :: createInstance() {
-        if (vulkanDebugManager::enableValidationLayers && !vulkanPhysicalDeviceManager::checkValidationLayerSupport()) {
-            throw std::runtime_error("validation layers requested, but not available!");
-        }
-
-        VkApplicationInfo appInfo{};
-        appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-        appInfo.pApplicationName = "Project Lightboard";
-        appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.pEngineName = "Lightboard";
-        appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.apiVersion = VK_API_VERSION_1_0;
-
-        VkInstanceCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-        createInfo.pApplicationInfo = &appInfo;
-
-        auto extensions = vulkanPhysicalDeviceManager::getRequiredPhysicalExtensions();
-        createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-        createInfo.ppEnabledExtensionNames = extensions.data();
-
-        VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
-        if (vulkanDebugManager::enableValidationLayers) {
-            createInfo.enabledLayerCount = static_cast<uint32_t>(vulkanDebugManager::validationLayers.size());
-            createInfo.ppEnabledLayerNames = vulkanDebugManager::validationLayers.data();
-
-            vulkanDebugManager::populateDebugMessengerCreateInfo(debugCreateInfo);
-            createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
-        } else {
-            createInfo.enabledLayerCount = 0;
-
-            createInfo.pNext = nullptr;
-        }
-
-        if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create instance!");
-        }
-}

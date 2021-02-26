@@ -15,7 +15,9 @@ class windowManager {
 
         static void initWindow();
 
-        static const char** getWindowExtents(uint32_t &);
+        static const char** getWindowExtents(uint32_t &glfwExtensionCount);
+
+        static VkResult initWindowSurface(VkInstance instance, VkSurfaceKHR &surface);
 
         static void pollWindow();
 
