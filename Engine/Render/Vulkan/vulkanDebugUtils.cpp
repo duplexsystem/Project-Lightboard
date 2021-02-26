@@ -12,6 +12,8 @@ const std::vector<const char*>  vulkanDebugUtils :: validationLayers = {
 
 VkDebugUtilsMessengerEXT vulkanDebugUtils :: debugMessenger;
 
+VkAllocationCallbacks* vulkanDebugUtils :: allocationCallbacks;
+
 const char* vulkanDebugUtils :: to_string(VkResult r ){
     switch( r ){
         case VK_SUCCESS: return "VK_SUCCESS";

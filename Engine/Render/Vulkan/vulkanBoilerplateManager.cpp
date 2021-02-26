@@ -59,6 +59,7 @@ void vulkanBoilerplateManager :: initBoilerplate() {
     vkbInstance = instanceBuilderReturn.value();
     vulkanManager::instance = vkbInstance.instance;
     vulkanDebugUtils::debugMessenger = vkbInstance.debug_messenger;
+    vulkanDebugUtils::allocationCallbacks = vkbInstance.allocation_callbacks;
 
     VkResult surfaceReturn = windowManager::initWindowSurface(vulkanManager::instance, vulkanManager::surface);
     if (surfaceReturn != VK_SUCCESS) {
@@ -129,9 +130,11 @@ void vulkanBoilerplateManager :: cleanupBoilerplate() {
 
     vkb::destroy_swapchain(vkbSwapChain);
 
+    vkb::destroy_device(vkbDevice);
+
     vkDestroySurfaceKHR(vulkanManager::instance, vulkanManager::surface, nullptr);
 
-    vkb::destroy_device(vkbDevice);
+    vkb::destroy_debug_utils_messenger(vulkanManager::instance, vulkanDebugUtils::debugMessenger, vulkanDebugUtils::allocationCallbacks);
 
     vkb::destroy_instance(vkbInstance);
 }
