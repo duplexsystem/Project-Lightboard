@@ -1,8 +1,34 @@
 cmake_minimum_required(VERSION 3.16)
+
+#Use Clang if available
+find_program(CLANG_FOUND clang)
+if(CLANG_FOUND)
+    SET (CMAKE_C_COMPILER "/usr/bin/clang")
+    SET (CMAKE_CXX_COMPILER "/usr/bin/clang++")
+endif()
+
 project(Project_LightBoard)
 
 #Compiler Options
 set(CMAKE_CXX_STANDARD 20)
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    if(CMAKE_BUILD_TYPE MATCHES Debug)
+        string(APPEND CMAKE_C_FLAGS " -O0 -g")
+        string(APPEND CMAKE_CXX_FLAGS " -O0 -g")
+    endif()
+    if(CMAKE_BUILD_TYPE MATCHES Release)
+        string(APPEND CMAKE_C_FLAGS " -O3 -DNDEBUG -fmerge-all-constants -fomit-frame-pointer")
+        string(APPEND CMAKE_CXX_FLAGS " -O3 -DNDEBUG -fmerge-all-constants -fomit-frame-pointer")
+    endif()
+    if(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
+        string(APPEND CMAKE_C_FLAGS " -O3 -g -fmerge-all-constants")
+        string(APPEND CMAKE_CXX_FLAGS " -O3 -g -fmerge-all-constants")
+    endif()
+    if(CMAKE_BUILD_TYPE MATCHES MinSizeRel)
+        string(APPEND CMAKE_C_FLAGS " -Os -DNDEBUG -fmerge-all-constants")
+        string(APPEND CMAKE_CXX_FLAGS " -Os -DNDEBUG -fmerge-all-constants")
+    endif()
+endif()
 
 #LLD
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -32,20 +58,14 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID 
 endif()
 include("${CMAKE_CURRENT_SOURCE_DIR}/Modules/FindAVX.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/Modules/FindSSE.cmake")
+string(APPEND CMAKE_C_FLAGS " ${ARCH_FLAGS} ${AVX_FLAGS} ${SSE_FLAGS}")
 string(APPEND CMAKE_CXX_FLAGS " ${ARCH_FLAGS} ${AVX_FLAGS} ${SSE_FLAGS}")
 
-#General Optimizations
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    if(CMAKE_BUILD_TYPE MATCHES Debug)
-        string(APPEND CMAKE_CXX_FLAGS " -O0")
-        message(STATUS "Using O0")
-    else()
-        string(APPEND CMAKE_CXX_FLAGS " -O3")
-        message(STATUS "Using O3")
-    endif()
-endif()
+#Print Full flags
+message(STATUS "Using C Flags: ${CMAKE_C_FLAGS}")
+message(STATUS "Using C++ Flags: ${CMAKE_CXX_FLAGS}")
 
-add_executable(Project_LightBoard Engine/main.cpp Engine/Render/renderManager.cpp Engine/Render/renderManager.h Engine/Render/windowManager.cpp Engine/Render/windowManager.h Engine/Render/Vulkan/vulkanManager.cpp Engine/Render/Vulkan/vulkanManager.h Engine/Render/Vulkan/vulkanDebugUtils.cpp Engine/Render/Vulkan/vulkanDebugUtils.h Engine/Render/Vulkan/vulkanBoilerplateManager.cpp Engine/Render/Vulkan/vulkanBoilerplateManager.h)
+add_executable(Project_LightBoard Engine/main.cpp Engine/Render/renderManager.cpp Engine/Render/renderManager.h Engine/Render/windowManager.cpp Engine/Render/windowManager.h Engine/Render/Vulkan/vulkanManager.cpp Engine/Render/Vulkan/vulkanManager.h Engine/Render/Vulkan/vulkanDebugUtils.cpp Engine/Render/Vulkan/vulkanDebugUtils.h Engine/Render/Vulkan/vulkanBoilerplateManager.cpp Engine/Render/Vulkan/vulkanBoilerplateManager.h Engine/Render/Vulkan/vulkanGraphicsPipelineManager.cpp Engine/Render/Vulkan/vulkanGraphicsPipelineManager.h)
 
 #LTO
 set_property(TARGET Project_LightBoard PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
@@ -56,7 +76,7 @@ set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_DEBUG "DEBUG")
 
 #---------------------------Rendering------------------------
 #GLM
-set(glm_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/glm/cmake/glm) # if necessary
+set(glm_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Libs/glm/cmake/glm) # if necessary
 find_package(glm REQUIRED)
 target_link_libraries(Project_LightBoard glm::glm)
 
@@ -65,7 +85,7 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Libs/glfw)
 target_link_libraries(Project_LightBoard glfw)
 
 #Vulkan
@@ -73,37 +93,9 @@ find_package(Vulkan REQUIRED FATAL_ERROR)
 target_link_libraries(Project_LightBoard vulkan)
 
 #Vk-bootstrap
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/vk-bootstrap)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Libs/vk-bootstrap)
 target_link_libraries(Project_LightBoard vk-bootstrap)
 
-#Vk-bootstrap
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/VulkanMemoryAllocator)
+#Vulkan Memory Allocator
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator)
 target_link_libraries(Project_LightBoard VulkanMemoryAllocator)
-
-#SPIRV-Headers
-set(SPIRV_HEADERS_SKIP_EXAMPLES ON CACHE BOOL "" FORCE)
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/SPIRV-Headers)
-target_link_libraries(Project_LightBoard SPIRV-Headers)
-
-#SPIRV-Tools
-set(SPIRV_SKIP_TESTS ON CACHE BOOL "" FORCE)
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/SPIRV-Tools)
-target_link_libraries(Project_LightBoard SPIRV-Tools)
-
-#glslang
-set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/glslang)
-target_link_libraries(glslang PRIVATE SPIRV-Tools)
-target_link_libraries(Project_LightBoard glslang)
-
-#ShaderC
-set(SHADERC_SKIP_INSTALL ON CACHE BOOL "" FORCE)
-set(SHADERC_SKIP_TESTS ON CACHE BOOL "" FORCE)
-set(SHADERC_SKIP_EXAMPLES ON CACHE BOOL "" FORCE)
-set(ASCIIDOCTOR_EXE ON CACHE BOOL "" FORCE)
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/shaderc)
-target_link_libraries(Project_LightBoard shaderc)

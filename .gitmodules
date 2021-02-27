@@ -1,24 +1,12 @@
 [submodule "glm"]
-	path = libs/glm
+	path = Libs/glm
 	url = https://github.com/g-truc/glm.git
 [submodule "glfw"]
-	path = libs/glfw
+	path = Libs/glfw
 	url = https://github.com/glfw/glfw.git
-[submodule "shaderc"]
-	path = libs/shaderc
-	url = https://github.com/google/shaderc.git
-[submodule "SPIRV-Tools"]
-	path = libs/SPIRV-Tools
-	url = https://github.com/KhronosGroup/SPIRV-Tools.git
-[submodule "SPIRV-Headers"]
-	path = libs/SPIRV-Headers
-	url = https://github.com/KhronosGroup/SPIRV-Headers.git
-[submodule "glslang"]
-	path = libs/glslang
-	url = https://github.com/KhronosGroup/glslang.git
 [submodule "vk-bootstrap"]
-	path = libs/vk-bootstrap
+	path = Libs/vk-bootstrap
 	url = https://github.com/charles-lunarg/vk-bootstrap.git
 [submodule "VulkanMemoryAllocator"]
-	path = libs/VulkanMemoryAllocator
+	path = Libs/VulkanMemoryAllocator
 	url = https://github.com/duplexsystem/VulkanMemoryAllocator.git
