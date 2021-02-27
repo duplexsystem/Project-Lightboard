@@ -132,7 +132,5 @@ void vulkanBoilerplateManager :: cleanupBoilerplate() {
 
     vkDestroySurfaceKHR(vulkanManager::instance, vulkanManager::surface, nullptr);
 
-    vkb::destroy_debug_utils_messenger(vulkanManager::instance, vulkanDebugUtils::debugMessenger, VK_NULL_HANDLE);
-
     vkb::destroy_instance(vkbInstance);
 }
