@@ -70,6 +70,15 @@ add_executable(Project_LightBoard Engine/main.cpp Engine/Render/renderManager.cp
 #LTO
 set_property(TARGET Project_LightBoard PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 
+#Compile and Include Shaders
+include("${CMAKE_CURRENT_SOURCE_DIR}/Modules/CompileShaders.cmake")
+add_dependencies(Project_LightBoard Shaders)
+add_custom_command(TARGET Project_LightBoard POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Project_LightBoard>/Shaders/"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${PROJECT_BINARY_DIR}/Shaders"
+        "$<TARGET_FILE_DIR:Project_LightBoard>/Shaders")
+
 set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_DEBUG "DEBUG")
 
 

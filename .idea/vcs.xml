@@ -2,19 +2,9 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/glm" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/OpenCL-SDK" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/OpenCL-SDK/external/OpenCL-CLHPP" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/OpenCL-SDK/external/OpenCL-Headers" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/OpenCL-SDK/external/OpenCL-ICD-Loader" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/SPIRV-Headers" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/SPIRV-Tools" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/SPIRV-Tools/external/re2" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/VulkanMemoryAllocator" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/glfw" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/glm" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/glslang" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/shaderc" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/vk-bootstrap" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Libs/VulkanMemoryAllocator" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Libs/glfw" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Libs/glm" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Libs/vk-bootstrap" vcs="Git" />
   </component>
 </project>
