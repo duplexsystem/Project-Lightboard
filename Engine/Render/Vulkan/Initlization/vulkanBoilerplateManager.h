@@ -23,7 +23,12 @@ class vulkanBoilerplateManager {
 
         static void initBoilerplate();
 
+        static void reinitSwapChain();
+
         static void cleanupBoilerplate();
+
+    private:
+        static void initImageViews();
 };
 
 

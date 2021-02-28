@@ -6,7 +6,7 @@
 #define PROJECT_LIGHTBOARD_VULKANDEBUGUTILS_H
 
 
-#include "vulkanManager.h"
+#include "../vulkanManager.h"
 
 class vulkanDebugUtils {
     public:

@@ -3,11 +3,12 @@
 //
 
 #include "vulkanBoilerplateManager.h"
-#include "vulkanDebugUtils.h"
-#include "../windowManager.h"
+#include "../Utils/vulkanDebugUtils.h"
+#include "../../windowManager.h"
 
 #include <vulkan/vulkan.h>
 #include <VkBootstrap.h>
+
 
 vkb::Instance vulkanBoilerplateManager :: vkbInstance;
 
@@ -103,12 +104,14 @@ void vulkanBoilerplateManager :: initBoilerplate() {
         throw std::runtime_error("Failed to create Graphics queue. Error: " + std::string(graphicsQueueReturn.error().message()) + "\n");
     }
     vulkanManager::graphicsQueue = graphicsQueueReturn.value();
+    vulkanManager::graphicsQueueFamily = vkbDevice.get_queue_index(vkb::QueueType::graphics).value();
 
     auto presentQueueReturn = vkbDevice.get_queue(vkb::QueueType::present);
     if (!presentQueueReturn) {
         throw std::runtime_error("Failed to create Present queue. Error: " + std::string(presentQueueReturn.error().message()) + "\n");
     }
     vulkanManager::presentQueue = presentQueueReturn.value();
+    vulkanManager::presentQueueFamily = vkbDevice.get_queue_index(vkb::QueueType::present).value();
 
     vkb::SwapchainBuilder swapChainBuilder{vkbDevice};
     auto swapChainReturn = swapChainBuilder.build();
@@ -116,11 +119,33 @@ void vulkanBoilerplateManager :: initBoilerplate() {
         throw std::runtime_error("Failed to create Swap Chain. Error: " + std::string(swapChainReturn.error().message() + "\n"));
     }
     vkbSwapChain = swapChainReturn.value();
-    vulkanManager::swapChain = vkbSwapChain.swapchain;
-    vulkanManager::swapChainImages = vkbSwapChain.get_images().value();
-    vulkanManager::swapChainImageFormat = vkbSwapChain.image_format;
-    vulkanManager::swapChainExtent = vkbSwapChain.extent;
-    vulkanManager::swapChainImageViews = vkbSwapChain.get_image_views().value();
+    initImageViews();
+}
+
+void vulkanBoilerplateManager :: reinitSwapChain() {
+    windowManager::waitWhileMinimized();
+
+    vulkanManager::cleanupVulkanPipeline();
+
+    vkbSwapChain.destroy_image_views(vulkanManager::swapChainImageViews);
+
+    vkb::SwapchainBuilder swapchain_builder{vkbDevice};
+    auto swap_ret = swapchain_builder.set_old_swapchain(vkbSwapChain)
+            .build();
+    if (!swap_ret){
+        // If it failed to create a swapchain, the old swapchain handle is invalid.
+        vkbSwapChain.swapchain = VK_NULL_HANDLE;
+    }
+
+    // Even though we recycled the previous swapchain, we need to free its resources.
+    vkb::destroy_swapchain(vkbSwapChain);
+
+    // Get the new swapchain and place it in our variable
+    vkbSwapChain = swap_ret.value();
+
+    initImageViews();
+
+    vulkanManager::initVulkanPipeline(false);
 }
 
 void vulkanBoilerplateManager :: cleanupBoilerplate() {
@@ -133,4 +158,13 @@ void vulkanBoilerplateManager :: cleanupBoilerplate() {
     vkDestroySurfaceKHR(vulkanManager::instance, vulkanManager::surface, nullptr);
 
     vkb::destroy_instance(vkbInstance);
+}
+
+
+void vulkanBoilerplateManager :: initImageViews() {
+    vulkanManager::swapChain = vkbSwapChain.swapchain;
+    vulkanManager::swapChainImages = vkbSwapChain.get_images().value();
+    vulkanManager::swapChainImageFormat = vkbSwapChain.image_format;
+    vulkanManager::swapChainExtent = vkbSwapChain.extent;
+    vulkanManager::swapChainImageViews = vkbSwapChain.get_image_views().value();
 }

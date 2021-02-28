@@ -21,7 +21,11 @@ class vulkanManager {
 
         static VkQueue graphicsQueue;
 
+        static uint32_t graphicsQueueFamily;
+
         static VkQueue presentQueue;
+
+        static uint32_t presentQueueFamily;
 
         static VkSwapchainKHR swapChain;
 
@@ -35,10 +39,13 @@ class vulkanManager {
 
         static void initVulkan();
 
-        static void cleanupVulkan();
+        static void initVulkanPipeline(bool initCommandPool);
 
-    private:
-        static void createInstance();
+        static void pollVulkan();
+
+        static void cleanupVulkanPipeline();
+
+        static void cleanupVulkan();
 };
 
 

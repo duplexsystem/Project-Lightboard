@@ -11,7 +11,15 @@
 
 class windowManager {
     public:
+        static const uint32_t WIDTH;
+
+        static const uint32_t HEIGHT;
+
         static GLFWwindow* window;
+
+        static bool framebufferResized;
+
+        static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
         static void initWindow();
 
@@ -20,6 +28,8 @@ class windowManager {
         static VkResult initWindowSurface(VkInstance instance, VkSurfaceKHR &surface);
 
         static void pollWindow();
+
+        static void waitWhileMinimized();
 
         static bool shouldClose();
 

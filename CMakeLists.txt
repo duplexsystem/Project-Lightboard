@@ -65,7 +65,12 @@ string(APPEND CMAKE_CXX_FLAGS " ${ARCH_FLAGS} ${AVX_FLAGS} ${SSE_FLAGS}")
 message(STATUS "Using C Flags: ${CMAKE_C_FLAGS}")
 message(STATUS "Using C++ Flags: ${CMAKE_CXX_FLAGS}")
 
-add_executable(Project_LightBoard Engine/main.cpp Engine/Render/renderManager.cpp Engine/Render/renderManager.h Engine/Render/windowManager.cpp Engine/Render/windowManager.h Engine/Render/Vulkan/vulkanManager.cpp Engine/Render/Vulkan/vulkanManager.h Engine/Render/Vulkan/vulkanDebugUtils.cpp Engine/Render/Vulkan/vulkanDebugUtils.h Engine/Render/Vulkan/vulkanBoilerplateManager.cpp Engine/Render/Vulkan/vulkanBoilerplateManager.h Engine/Render/Vulkan/vulkanGraphicsPipelineManager.cpp Engine/Render/Vulkan/vulkanGraphicsPipelineManager.h)
+#Add Source Files for Build
+file(GLOB_RECURSE ENGINE_SOURCE CONFIGURE_DEPENDS
+        "Engine/*.h"
+        "Engine/*.cpp"
+        )
+add_executable(Project_LightBoard ${ENGINE_SOURCE} Engine/Render/Vulkan/Render/vulkanRender.cpp Engine/Render/Vulkan/Render/vulkanRender.h)
 
 #LTO
 set_property(TARGET Project_LightBoard PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)

@@ -16,6 +16,8 @@ void renderManager :: initRender() {
 void renderManager :: pollRender() {
     while (!windowManager::shouldClose()) {
         windowManager::pollWindow();
+
+        vulkanManager::pollVulkan();
     }
 }
 
