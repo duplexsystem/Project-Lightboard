@@ -1,13 +1,29 @@
 cmake_minimum_required(VERSION 3.16)
 
+project(Project_LightBoard)
+
+#Use Ninja if found
+find_program(NINJA_FOUND ninja)
+if(NINJA_FOUND)
+    SET (CMAKE_GENERATOR Ninja)
+    message(STATUS "Using Ninja Generator")
+endif()
+
 #Use Clang if available
 find_program(CLANG_FOUND clang)
 if(CLANG_FOUND)
     SET (CMAKE_C_COMPILER "/usr/bin/clang")
     SET (CMAKE_CXX_COMPILER "/usr/bin/clang++")
+    message(STATUS "Using Clang Compiler")
 endif()
 
-project(Project_LightBoard)
+#CCache
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+    #set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    #SET (CMAKE_CXX_COMPILER_LAUNCHER ccache)
+    message(STATUS "Using Ccache")
+endif(CCACHE_FOUND)
 
 #Compiler Options
 set(CMAKE_CXX_STANDARD 20)
@@ -17,22 +33,22 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID 
         string(APPEND CMAKE_CXX_FLAGS " -O0 -g")
     endif()
     if(CMAKE_BUILD_TYPE MATCHES Release)
-        string(APPEND CMAKE_C_FLAGS " -O3 -DNDEBUG -fmerge-all-constants -fomit-frame-pointer")
-        string(APPEND CMAKE_CXX_FLAGS " -O3 -DNDEBUG -fmerge-all-constants -fomit-frame-pointer")
+        string(APPEND CMAKE_C_FLAGS " -O3 -DNDEBUG -fmerge-all-constants -fomit-frame-pointer -flto")
+        string(APPEND CMAKE_CXX_FLAGS " -O3 -DNDEBUG -fmerge-all-constants -fomit-frame-pointer -flto")
     endif()
     if(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
-        string(APPEND CMAKE_C_FLAGS " -O3 -g -fmerge-all-constants")
-        string(APPEND CMAKE_CXX_FLAGS " -O3 -g -fmerge-all-constants")
+        string(APPEND CMAKE_C_FLAGS " -O3 -g -fmerge-all-constants -flto")
+        string(APPEND CMAKE_CXX_FLAGS " -O3 -g -fmerge-all-constants -flto")
     endif()
     if(CMAKE_BUILD_TYPE MATCHES MinSizeRel)
-        string(APPEND CMAKE_C_FLAGS " -Os -DNDEBUG -fmerge-all-constants")
-        string(APPEND CMAKE_CXX_FLAGS " -Os -DNDEBUG -fmerge-all-constants")
+        string(APPEND CMAKE_C_FLAGS " -Os -DNDEBUG -fmerge-all-constants -fomit-frame-pointer -flto")
+        string(APPEND CMAKE_CXX_FLAGS " -Os -DNDEBUG -fmerge-all-constants -fomit-frame-pointer  -flto")
     endif()
 endif()
 
 #LLD
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    find_program(LLD_FOUND ccache)
+    find_program(LLD_FOUND ld.lld)
     if(LLD_FOUND)
         string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=lld")
         string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=lld")
@@ -40,13 +56,6 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID 
         message(STATUS "Using LLD Linker")
     endif()
 endif()
-
-#CCache
-find_program(CCACHE_FOUND ccache)
-if(CCACHE_FOUND)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-    message(STATUS "Using Ccache")
-endif(CCACHE_FOUND)
 
 #Enable System Specific Compiler Optimizations
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -71,9 +80,6 @@ file(GLOB_RECURSE ENGINE_SOURCE CONFIGURE_DEPENDS
         "Engine/*.cpp"
         )
 add_executable(Project_LightBoard ${ENGINE_SOURCE} Engine/Render/Vulkan/Render/vulkanRender.cpp Engine/Render/Vulkan/Render/vulkanRender.h)
-
-#LTO
-set_property(TARGET Project_LightBoard PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 #Compile and Include Shaders
 include("${CMAKE_CURRENT_SOURCE_DIR}/Modules/CompileShaders.cmake")
