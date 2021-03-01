@@ -2,26 +2,10 @@ cmake_minimum_required(VERSION 3.16)
 
 project(Project_LightBoard)
 
-#Use Ninja if found
-find_program(NINJA_FOUND ninja)
-if(NINJA_FOUND)
-    SET (CMAKE_GENERATOR Ninja)
-    message(STATUS "Using Ninja Generator")
-endif()
-
-#Use Clang if available
-find_program(CLANG_FOUND clang)
-if(CLANG_FOUND)
-    SET (CMAKE_C_COMPILER "/usr/bin/clang")
-    SET (CMAKE_CXX_COMPILER "/usr/bin/clang++")
-    message(STATUS "Using Clang Compiler")
-endif()
-
 #CCache
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
-    #set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-    #SET (CMAKE_CXX_COMPILER_LAUNCHER ccache)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_FOUND}")
     message(STATUS "Using Ccache")
 endif(CCACHE_FOUND)
 
