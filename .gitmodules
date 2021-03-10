@@ -13,3 +13,6 @@
 [submodule "VulkanMemoryAllocator-Hpp"]
 	path = Libs/VulkanMemoryAllocator-Hpp
 	url = https://github.com/duplexsystem/VulkanMemoryAllocator-Hpp.git
+[submodule "Libs/Vookoo"]
+	path = Libs/Vookoo
+	url = https://github.com/andy-thomason/Vookoo.git
