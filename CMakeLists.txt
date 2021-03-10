@@ -62,8 +62,9 @@ message(STATUS "Using C++ Flags: ${CMAKE_CXX_FLAGS}")
 file(GLOB_RECURSE ENGINE_SOURCE CONFIGURE_DEPENDS
         "Engine/*.h"
         "Engine/*.cpp"
+        "Engine/*.hpp"
         )
-add_executable(Project_LightBoard ${ENGINE_SOURCE} Engine/Render/Vulkan/Render/vulkanRender.cpp Engine/Render/Vulkan/Render/vulkanRender.h)
+add_executable(Project_LightBoard ${ENGINE_SOURCE})
 
 #Compile and Include Shaders
 include("${CMAKE_CURRENT_SOURCE_DIR}/Modules/CompileShaders.cmake")
@@ -80,9 +81,8 @@ set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_DEBUG "DEBUG")
 
 #---------------------------Rendering------------------------
 #GLM
-set(glm_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Libs/glm/cmake/glm) # if necessary
-find_package(glm REQUIRED)
-target_link_libraries(Project_LightBoard glm::glm)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Libs/glm)
+target_link_libraries(Project_LightBoard glm)
 
 #GLFM
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
