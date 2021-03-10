@@ -103,3 +103,13 @@ target_link_libraries(Project_LightBoard vk-bootstrap)
 #Vulkan Memory Allocator
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator)
 target_link_libraries(Project_LightBoard VulkanMemoryAllocator)
+
+#Vulkan Memory Allocator Hpp
+file(GLOB_RECURSE VulkanMemoryAllocator_Hpp_SOURCE CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.hpp"
+        )
+add_library(VulkanMemoryAllocator-Hpp INTERFACE)
+target_sources(VulkanMemoryAllocator-Hpp INTERFACE ${VulkanMemoryAllocator_Hpp_SOURCE})
+target_link_libraries(Project_LightBoard VulkanMemoryAllocator-Hpp)
