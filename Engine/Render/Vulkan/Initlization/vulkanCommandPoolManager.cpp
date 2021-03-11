@@ -6,18 +6,16 @@
 #include "../vulkanManager.h"
 #include "../Utils/vulkanDebugUtils.h"
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
-VkCommandPool vulkanCommandPoolManager :: commandPool;
+vk::CommandPool vulkanCommandPoolManager :: commandPool;
 
 void vulkanCommandPoolManager :: initCommandPool() {
-    VkCommandPoolCreateInfo poolInfo{};
-    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    vk::CommandPoolCreateInfo poolInfo{};
     poolInfo.queueFamilyIndex = vulkanManager::graphicsQueueFamily;
-    poolInfo.flags = 0; // Optional
 
-    auto commandPoolReturn = vkCreateCommandPool(vulkanManager::device, &poolInfo, nullptr, &commandPool);
-    if (commandPoolReturn!= VK_SUCCESS) {
+    auto commandPoolReturn = vulkanManager::device.createCommandPool(&poolInfo, nullptr, &commandPool);
+    if (commandPoolReturn!= vk::Result::eSuccess) {
         throw std::runtime_error("Failed to create Command Pool. Error: " + std::string(vulkanDebugUtils::to_string(commandPoolReturn)) + "\n");
     }
 

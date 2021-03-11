@@ -10,22 +10,21 @@
 #include "vulkanRenderPassManager.h"
 #include "vulkanGraphicsPipelineManager.h"
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 #include <vector>
 
-std::vector<VkCommandBuffer> vulkanCommandBufferManager :: commandBuffers;
+std::vector<vk::CommandBuffer> vulkanCommandBufferManager :: commandBuffers;
 
 void vulkanCommandBufferManager :: initCommandBuffer() {
     commandBuffers.resize(vulkanFramebufferManager::swapChainFramebuffers.size());
 
-    VkCommandBufferAllocateInfo allocInfo{};
-    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    vk::CommandBufferAllocateInfo allocInfo{};
     allocInfo.commandPool = vulkanCommandPoolManager::commandPool;
-    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.level = vk::CommandBufferLevel::ePrimary;
     allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
 
-    auto commandPoolReturn = vkAllocateCommandBuffers(vulkanManager::device, &allocInfo, commandBuffers.data());
-    if (commandPoolReturn != VK_SUCCESS) {
+    auto commandPoolReturn = vulkanManager::device.allocateCommandBuffers(&allocInfo, commandBuffers.data());
+    if (commandPoolReturn != vk::Result::eSuccess) {
         throw std::runtime_error("Failed to create Command Pool. Error: " + std::string(vulkanDebugUtils::to_string(commandPoolReturn)) + "\n");
     }
 
@@ -36,8 +35,9 @@ void vulkanCommandBufferManager :: initCommandBuffer() {
         beginInfo.pInheritanceInfo = nullptr; // Optional
 
         auto commandPoolRecordReturn = vkBeginCommandBuffer(commandBuffers[i], &beginInfo);
-        if (commandPoolRecordReturn != VK_SUCCESS) {
-            throw std::runtime_error("Failed to Being Recording Command Buffer. Error:" + std::string(vulkanDebugUtils::to_string(commandPoolRecordReturn)) + "\n");
+        if (static_cast<vk::Result>(commandPoolRecordReturn) != vk::Result::eSuccess) {
+            throw std::runtime_error("Failed to Being Recording Command Buffer. Error:" + std::string(vulkanDebugUtils::to_string(
+                    static_cast<vk::DebugReportObjectTypeEXT>(commandPoolRecordReturn))) + "\n");
         }
 
         VkRenderPassBeginInfo renderPassInfo{};
@@ -59,13 +59,14 @@ void vulkanCommandBufferManager :: initCommandBuffer() {
         vkCmdEndRenderPass(commandBuffers[i]);
 
         auto endCommandBufferReturn = vkEndCommandBuffer(commandBuffers[i]) ;
-        if (endCommandBufferReturn  != VK_SUCCESS) {
-            throw std::runtime_error("Failed to end Command Buffer. Error: " + std::string(vulkanDebugUtils::to_string(endCommandBufferReturn)) + "\n");
+        if (static_cast<vk::Result>(endCommandBufferReturn) != vk::Result::eSuccess) {
+            throw std::runtime_error("Failed to end Command Buffer. Error: " + std::string(vulkanDebugUtils::to_string(
+                    static_cast<vk::DebugReportObjectTypeEXT>(endCommandBufferReturn))) + "\n");
         }
 
     }
 }
 
 void vulkanCommandBufferManager :: cleanupCommandBuffer() {
-    vkFreeCommandBuffers(vulkanManager::device, vulkanCommandPoolManager::commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+    vulkanManager::device.freeCommandBuffers(vulkanCommandPoolManager::commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 }

@@ -64,7 +64,7 @@ file(GLOB_RECURSE ENGINE_SOURCE CONFIGURE_DEPENDS
         "Engine/*.cpp"
         "Engine/*.hpp"
         )
-add_executable(Project_LightBoard ${ENGINE_SOURCE})
+add_executable(Project_LightBoard ${ENGINE_SOURCE} Engine/Render/Vulkan/Shader/vulkanShader.cpp Engine/Render/Vulkan/Shader/vulkanShader.h)
 
 #Compile and Include Shaders
 include("${CMAKE_CURRENT_SOURCE_DIR}/Modules/CompileShaders.cmake")
@@ -105,11 +105,13 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator)
 target_link_libraries(Project_LightBoard VulkanMemoryAllocator)
 
 #Vulkan Memory Allocator Hpp
-file(GLOB_RECURSE VulkanMemoryAllocator_Hpp_SOURCE CONFIGURE_DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.hpp"
-        )
-add_library(VulkanMemoryAllocator-Hpp INTERFACE)
-target_sources(VulkanMemoryAllocator-Hpp INTERFACE ${VulkanMemoryAllocator_Hpp_SOURCE})
-target_link_libraries(Project_LightBoard VulkanMemoryAllocator-Hpp)
+#file(GLOB_RECURSE VulkanMemoryAllocator_Hpp_SOURCE CONFIGURE_DEPENDS
+#        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.h"
+#        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.cpp"
+#        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.hpp"
+#        )
+#add_library(VulkanMemoryAllocator-Hpp INTERFACE)
+#target_sources(VulkanMemoryAllocator-Hpp INTERFACE ${VulkanMemoryAllocator_Hpp_SOURCE})
+#target_link_libraries(Project_LightBoard VulkanMemoryAllocator-Hpp)
+
+#Vookoo

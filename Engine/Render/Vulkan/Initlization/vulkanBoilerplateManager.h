@@ -5,6 +5,9 @@
 #ifndef PROJECT_LIGHTBOARD_VULKANBOILERPLATEMANAGER_H
 #define PROJECT_LIGHTBOARD_VULKANBOILERPLATEMANAGER_H
 
+#include "../Shader/vulkanShader.h"
+
+#include <vulkan/vulkan.hpp>
 #include <VkBootstrap.h>
 
 class vulkanBoilerplateManager {
@@ -22,6 +25,8 @@ class vulkanBoilerplateManager {
         static vkb::Swapchain vkbSwapChain;
 
         static void initBoilerplate();
+
+        static void initBoilerplatePipeline(vulkanShader shaderArray[]);
 
         static void reinitSwapChain();
 

@@ -5,37 +5,37 @@
 #ifndef PROJECT_LIGHTBOARD_VULKANMANAGER_H
 #define PROJECT_LIGHTBOARD_VULKANMANAGER_H
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 #include <vector>
 #include <VkBootstrap.h>
 
 class vulkanManager {
     public:
-        static VkInstance instance;
+        static vk::Instance instance;
 
-        static VkSurfaceKHR surface;
+        static vk::SurfaceKHR surface;
 
-        static VkPhysicalDevice physicalDevice;
+        static vk::PhysicalDevice physicalDevice;
 
-        static VkDevice device;
+        static vk::Device device;
 
-        static VkQueue graphicsQueue;
+        static vk::Queue graphicsQueue;
 
         static uint32_t graphicsQueueFamily;
 
-        static VkQueue presentQueue;
+        static vk::Queue presentQueue;
 
         static uint32_t presentQueueFamily;
 
-        static VkSwapchainKHR swapChain;
+        static vk::SwapchainKHR swapChain;
 
-        static std::vector<VkImage> swapChainImages;
+        static std::vector<vk::Image> swapChainImages;
 
-        static VkFormat swapChainImageFormat;
+        static vk::Format swapChainImageFormat;
 
-        static VkExtent2D swapChainExtent;
+        static vk::Extent2D swapChainExtent;
 
-        static std::vector<VkImageView> swapChainImageViews;
+        static std::vector<vk::ImageView> swapChainImageViews;
 
         static void initVulkan();
 

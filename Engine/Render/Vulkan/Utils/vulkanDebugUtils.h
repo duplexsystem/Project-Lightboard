@@ -12,11 +12,11 @@ class vulkanDebugUtils {
     public:
         static const std::vector<const char*> validationLayers;
 
-        static VkDebugUtilsMessengerEXT debugMessenger;
+        static vk::DebugUtilsMessengerEXT debugMessenger;
 
-        static const char* to_string( VkResult r );
+        static const char* to_string( vk::Result r );
 
-        static const char* to_string( VkDebugReportObjectTypeEXT o);
+        static const char* to_string( vk::DebugReportObjectTypeEXT o);
 };
 
 

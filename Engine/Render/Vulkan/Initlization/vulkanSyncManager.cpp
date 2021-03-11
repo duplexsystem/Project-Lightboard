@@ -6,17 +6,17 @@
 #include "../vulkanManager.h"
 #include "../Utils/vulkanDebugUtils.h"
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 const int vulkanSyncManager :: MAX_FRAMES_IN_FLIGHT = 2;
 
-std::vector<VkSemaphore> vulkanSyncManager :: imageAvailableSemaphores;
+std::vector<vk::Semaphore> vulkanSyncManager :: imageAvailableSemaphores;
 
-std::vector<VkSemaphore> vulkanSyncManager :: renderFinishedSemaphores;
+std::vector<vk::Semaphore> vulkanSyncManager :: renderFinishedSemaphores;
 
-std::vector<VkFence> vulkanSyncManager :: inFlightFences;
+std::vector<vk::Fence> vulkanSyncManager :: inFlightFences;
 
-std::vector<VkFence> vulkanSyncManager :: imagesInFlight;
+std::vector<vk::Fence> vulkanSyncManager :: imagesInFlight;
 
 size_t vulkanSyncManager :: currentFrame = 0;
 
@@ -24,20 +24,18 @@ void vulkanSyncManager :: initSync() {
     imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
-    imagesInFlight.resize(vulkanManager::swapChainImages.size(), VK_NULL_HANDLE);
+    imagesInFlight.resize(vulkanManager::swapChainImages.size());
 
-    VkSemaphoreCreateInfo semaphoreInfo{};
-    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    vk::SemaphoreCreateInfo semaphoreInfo{};
 
-    VkFenceCreateInfo fenceInfo{};
-    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+    vk::FenceCreateInfo fenceInfo{};
+    fenceInfo.flags = vk::FenceCreateFlagBits::eSignaled;
 
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-        auto imageAvailableSemaphoreReturn = vkCreateSemaphore(vulkanManager::device, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]);
-        auto renderFinishedSemaphoreReturn = vkCreateSemaphore(vulkanManager::device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]);
-        auto inFlightFencesReturn = vkCreateFence(vulkanManager::device, &fenceInfo, nullptr, &inFlightFences[i]);
-        if (imageAvailableSemaphoreReturn != VK_SUCCESS || renderFinishedSemaphoreReturn != VK_SUCCESS || inFlightFencesReturn != VK_SUCCESS) {
+        auto imageAvailableSemaphoreReturn = vulkanManager::device.createSemaphore(&semaphoreInfo, nullptr, &imageAvailableSemaphores[i]);
+        auto renderFinishedSemaphoreReturn = vulkanManager::device.createSemaphore(&semaphoreInfo, nullptr, &renderFinishedSemaphores[i]);
+        auto inFlightFencesReturn = vulkanManager::device.createFence(&fenceInfo, nullptr, &inFlightFences[i]);
+        if (imageAvailableSemaphoreReturn != vk::Result::eSuccess || renderFinishedSemaphoreReturn != vk::Result::eSuccess || inFlightFencesReturn != vk::Result::eSuccess) {
             throw std::runtime_error("Failed to create Image Available Semaphore and/or Render Finished Semaphore and/or In Flight Fences Return. "
                                      "Image Available Semaphore Return: " + std::string(vulkanDebugUtils::to_string(imageAvailableSemaphoreReturn)) +
                                      ". Render Finished Semaphore Return: " + std::string(vulkanDebugUtils::to_string(renderFinishedSemaphoreReturn)) +

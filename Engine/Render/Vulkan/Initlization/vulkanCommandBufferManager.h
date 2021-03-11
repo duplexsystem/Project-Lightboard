@@ -5,12 +5,12 @@
 #ifndef PROJECT_LIGHTBOARD_VULKANCOMMANDBUFFERMANAGER_H
 #define PROJECT_LIGHTBOARD_VULKANCOMMANDBUFFERMANAGER_H
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 #include <vector>
 
 class vulkanCommandBufferManager {
     public:
-        static std::vector<VkCommandBuffer> commandBuffers;
+        static std::vector<vk::CommandBuffer> commandBuffers;
 
         static void initCommandBuffer();
 

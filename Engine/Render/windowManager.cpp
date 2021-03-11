@@ -6,7 +6,7 @@
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 const uint32_t windowManager :: WIDTH = 800;
 const uint32_t windowManager :: HEIGHT = 600;
@@ -34,8 +34,8 @@ const char** windowManager :: getWindowExtents(uint32_t &glfwExtensionCount) {
     return glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 }
 
-VkResult windowManager :: initWindowSurface(VkInstance instance, VkSurfaceKHR &surface) {
-    return glfwCreateWindowSurface(instance, window, NULL, &surface);
+vk::Result windowManager :: initWindowSurface(VkInstance instance, VkSurfaceKHR &surface) {
+    return static_cast<vk::Result>(glfwCreateWindowSurface(instance, window, NULL, &surface));
 }
 
 bool windowManager :: shouldClose() {

@@ -5,15 +5,20 @@
 #ifndef PROJECT_LIGHTBOARD_VULKANGRAPHICSPIPELINEMANAGER_H
 #define PROJECT_LIGHTBOARD_VULKANGRAPHICSPIPELINEMANAGER_H
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
+#include "../Shader/vulkanShader.h"
+#include "vulkanRenderPassManager.h"
+#include "../../windowManager.h"
 
 class vulkanGraphicsPipelineManager {
     public:
-        static VkPipelineLayout pipelineLayout;
+        static vk::PipelineCache pipelineCache;
 
-        static VkPipeline graphicsPipeline;
+        static vk::PipelineLayout pipelineLayout;
 
-        static void initGraphicsPipeline();
+        static vk::Pipeline graphicsPipeline;
+
+        static void initGraphicsPipeline(std::vector<vulkanShader> shaderVector);
 
         static void cleanupGraphicsPipeline();
 };

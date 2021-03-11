@@ -5,11 +5,11 @@
 #ifndef PROJECT_LIGHTBOARD_VULKANRENDERPASSMANAGER_H
 #define PROJECT_LIGHTBOARD_VULKANRENDERPASSMANAGER_H
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 class vulkanRenderPassManager {
     public:
-        static VkRenderPass renderPass;
+        static vk::RenderPass renderPass;
 
         static void initRenderPass();
 

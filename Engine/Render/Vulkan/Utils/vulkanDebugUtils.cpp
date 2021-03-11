@@ -4,75 +4,75 @@
 
 #include "vulkanDebugUtils.h"
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 const std::vector<const char*>  vulkanDebugUtils :: validationLayers = {
         "VK_LAYER_KHRONOS_validation"
 };
 
-VkDebugUtilsMessengerEXT vulkanDebugUtils :: debugMessenger = VK_NULL_HANDLE;
+vk::DebugUtilsMessengerEXT vulkanDebugUtils :: debugMessenger = nullptr;
 
-const char* vulkanDebugUtils :: to_string(VkResult r ){
+const char* vulkanDebugUtils :: to_string(vk::Result r ){
     switch( r ){
-        case VK_SUCCESS: return "VK_SUCCESS";
-        case VK_NOT_READY: return "VK_NOT_READY";
-        case VK_TIMEOUT: return "VK_TIMEOUT";
-        case VK_EVENT_SET: return "VK_EVENT_SET";
-        case VK_EVENT_RESET: return "VK_EVENT_RESET";
-        case VK_INCOMPLETE: return "VK_INCOMPLETE";
-        case VK_ERROR_OUT_OF_HOST_MEMORY: return "VK_ERROR_OUT_OF_HOST_MEMORY";
-        case VK_ERROR_OUT_OF_DEVICE_MEMORY: return "VK_ERROR_OUT_OF_DEVICE_MEMORY";
-        case VK_ERROR_INITIALIZATION_FAILED: return "VK_ERROR_INITIALIZATION_FAILED";
-        case VK_ERROR_DEVICE_LOST: return "VK_ERROR_DEVICE_LOST";
-        case VK_ERROR_MEMORY_MAP_FAILED: return "VK_ERROR_MEMORY_MAP_FAILED";
-        case VK_ERROR_LAYER_NOT_PRESENT: return "VK_ERROR_LAYER_NOT_PRESENT";
-        case VK_ERROR_EXTENSION_NOT_PRESENT: return "VK_ERROR_EXTENSION_NOT_PRESENT";
-        case VK_ERROR_FEATURE_NOT_PRESENT: return "VK_ERROR_FEATURE_NOT_PRESENT";
-        case VK_ERROR_INCOMPATIBLE_DRIVER: return "VK_ERROR_INCOMPATIBLE_DRIVER";
-        case VK_ERROR_TOO_MANY_OBJECTS: return "VK_ERROR_TOO_MANY_OBJECTS";
-        case VK_ERROR_FORMAT_NOT_SUPPORTED: return "VK_ERROR_FORMAT_NOT_SUPPORTED";
-        case VK_ERROR_SURFACE_LOST_KHR: return "VK_ERROR_SURFACE_LOST_KHR";
-        case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: return "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR";
-        case VK_SUBOPTIMAL_KHR: return "VK_SUBOPTIMAL_KHR";
-        case VK_ERROR_OUT_OF_DATE_KHR: return "VK_ERROR_OUT_OF_DATE_KHR";
-        case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: return "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR";
-        case VK_ERROR_VALIDATION_FAILED_EXT: return "VK_ERROR_VALIDATION_FAILED_EXT";
-        case VK_ERROR_INVALID_SHADER_NV: return "VK_ERROR_INVALID_SHADER_NV";
-        default: return "unrecognized VkResult code";
+        case vk::Result::eSuccess: return "vk::Result::eSuccess";
+        case vk::Result::eNotReady: return "VK_NOT_READY";
+        case vk::Result::eTimeout: return "VK_TIMEOUT";
+        case vk::Result::eEventSet: return "VK_EVENT_SET";
+        case vk::Result::eEventReset: return "VK_EVENT_RESET";
+        case vk::Result::eIncomplete: return "VK_INCOMPLETE";
+        case vk::Result::eErrorOutOfHostMemory: return "VK_ERROR_OUT_OF_HOST_MEMORY";
+        case vk::Result::eErrorOutOfDeviceMemory: return "VK_ERROR_OUT_OF_DEVICE_MEMORY";
+        case vk::Result::eErrorInitializationFailed: return "VK_ERROR_INITIALIZATION_FAILED";
+        case vk::Result::eErrorDeviceLost: return "VK_ERROR_DEVICE_LOST";
+        case vk::Result::eErrorMemoryMapFailed: return "VK_ERROR_MEMORY_MAP_FAILED";
+        case vk::Result::eErrorLayerNotPresent: return "VK_ERROR_LAYER_NOT_PRESENT";
+        case vk::Result::eErrorExtensionNotPresent: return "VK_ERROR_EXTENSION_NOT_PRESENT";
+        case vk::Result::eErrorFeatureNotPresent: return "VK_ERROR_FEATURE_NOT_PRESENT";
+        case vk::Result::eErrorIncompatibleDriver: return "VK_ERROR_INCOMPATIBLE_DRIVER";
+        case vk::Result::eErrorTooManyObjects: return "VK_ERROR_TOO_MANY_OBJECTS";
+        case vk::Result::eErrorFormatNotSupported: return "VK_ERROR_FORMAT_NOT_SUPPORTED";
+        case vk::Result::eErrorSurfaceLostKHR: return "VK_ERROR_SURFACE_LOST_KHR";
+        case vk::Result::eErrorNativeWindowInUseKHR: return "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR";
+        case vk::Result::eSuboptimalKHR: return "VK_SUBOPTIMAL_KHR";
+        case vk::Result::eErrorOutOfDateKHR: return "VK_ERROR_OUT_OF_DATE_KHR";
+        case vk::Result::eErrorIncompatibleDisplayKHR: return "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR";
+        case vk::Result::eErrorValidationFailedEXT: return "VK_ERROR_VALIDATION_FAILED_EXT";
+        case vk::Result::eErrorInvalidShaderNV: return "VK_ERROR_INVALID_SHADER_NV";
+        default: return "unrecognized vk::Result code";
     }
 }
 
-const char* vulkanDebugUtils :: to_string(VkDebugReportObjectTypeEXT o ){
+const char* vulkanDebugUtils :: to_string(vk::DebugReportObjectTypeEXT o ){
     switch( o ){
-        case VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT: return "unknown";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_INSTANCE_EXT: return "Instance";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT: return "PhysicalDevice";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT: return "Device";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_QUEUE_EXT: return "Queue";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT: return "Semaphore";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT: return "CommandBuffer";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT: return "Fence";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT: return "DeviceMemory";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT: return "Buffer";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT: return "Image";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT: return "Event";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT: return "QueryPool";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_VIEW_EXT: return "BufferView";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_VIEW_EXT: return "ImageView";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_SHADER_MODULE_EXT: return "ShaderModule";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_CACHE_EXT: return "PipelineCache";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_LAYOUT_EXT: return "PipelineLayout";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT: return "RenderPass";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_EXT: return "Pipeline";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT_EXT: return "DescriptorSetLayout";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_EXT: return "Sampler";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_POOL_EXT: return "DescriptorPool";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_EXT: return "DescriptorSet";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_FRAMEBUFFER_EXT: return "Framebuffer";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_POOL_EXT: return "Command pool";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT: return "SurfaceKHR";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_SWAPCHAIN_KHR_EXT: return "SwapchainKHR";
-        case VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_EXT: return "DebugReport";
+        case vk::DebugReportObjectTypeEXT::eUnknown: return "Unknown";
+        case vk::DebugReportObjectTypeEXT::eInstance: return "Instance";
+        case vk::DebugReportObjectTypeEXT::ePhysicalDevice: return "PhysicalDevice";
+        case vk::DebugReportObjectTypeEXT::eDevice: return "Device";
+        case vk::DebugReportObjectTypeEXT::eQueue: return "Queue";
+        case vk::DebugReportObjectTypeEXT::eSemaphore: return "Semaphore";
+        case vk::DebugReportObjectTypeEXT::eCommandBuffer: return "CommandBuffer";
+        case vk::DebugReportObjectTypeEXT::eFence: return "Fence";
+        case vk::DebugReportObjectTypeEXT::eDeviceMemory: return "DeviceMemory";
+        case vk::DebugReportObjectTypeEXT::eBuffer: return "Buffer";
+        case vk::DebugReportObjectTypeEXT::eImage: return "Image";
+        case vk::DebugReportObjectTypeEXT::eEvent: return "Event";
+        case vk::DebugReportObjectTypeEXT::eQueryPool: return "QueryPool";
+        case vk::DebugReportObjectTypeEXT::eBufferView: return "BufferView";
+        case vk::DebugReportObjectTypeEXT::eImageView: return "ImageView";
+        case vk::DebugReportObjectTypeEXT::eShaderModule: return "ShaderModule";
+        case vk::DebugReportObjectTypeEXT::ePipelineCache: return "PipelineCache";
+        case vk::DebugReportObjectTypeEXT::ePipelineLayout: return "PipelineLayout";
+        case vk::DebugReportObjectTypeEXT::eRenderPass: return "RenderPass";
+        case vk::DebugReportObjectTypeEXT::ePipeline: return "Pipeline";
+        case vk::DebugReportObjectTypeEXT::eDescriptorSetLayout: return "DescriptorSetLayout";
+        case vk::DebugReportObjectTypeEXT::eSampler: return "Sampler";
+        case vk::DebugReportObjectTypeEXT::eDescriptorPool: return "DescriptorPool";
+        case vk::DebugReportObjectTypeEXT::eDescriptorSet: return "DescriptorSet";
+        case vk::DebugReportObjectTypeEXT::eFramebuffer: return "Framebuffer";
+        case vk::DebugReportObjectTypeEXT::eCommandPool: return "Command pool";
+        case vk::DebugReportObjectTypeEXT::eSurfaceKHR: return "SurfaceKHR";
+        case vk::DebugReportObjectTypeEXT::eSwapchainKHR: return "SwapchainKHR";
+        case vk::DebugReportObjectTypeEXT::eDebugReport: return "DebugReport";
         default: return "unrecognized";
     }
 }

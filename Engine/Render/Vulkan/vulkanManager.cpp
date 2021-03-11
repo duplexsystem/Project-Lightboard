@@ -12,27 +12,28 @@
 #include "Initlization/vulkanSyncManager.h"
 #include "Render/vulkanRender.h"
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
+#include <iostream>
 
-VkInstance vulkanManager :: instance;
+vk::Instance vulkanManager :: instance;
 
-VkSurfaceKHR vulkanManager :: surface;
+vk::SurfaceKHR vulkanManager :: surface;
 
-VkPhysicalDevice vulkanManager :: physicalDevice;
+vk::PhysicalDevice vulkanManager :: physicalDevice;
 
-VkDevice vulkanManager :: device;
+vk::Device vulkanManager :: device;
 
-VkQueue vulkanManager :: graphicsQueue;
+vk::Queue vulkanManager :: graphicsQueue;
 uint32_t vulkanManager :: graphicsQueueFamily;
 
-VkQueue vulkanManager :: presentQueue;
+vk::Queue vulkanManager :: presentQueue;
 uint32_t vulkanManager :: presentQueueFamily;
 
-VkSwapchainKHR vulkanManager :: swapChain;
-std::vector<VkImage> vulkanManager :: swapChainImages;
-VkFormat vulkanManager :: swapChainImageFormat;
-VkExtent2D vulkanManager :: swapChainExtent;
-std::vector<VkImageView> vulkanManager :: swapChainImageViews;
+vk::SwapchainKHR vulkanManager :: swapChain;
+std::vector<vk::Image> vulkanManager :: swapChainImages;
+vk::Format vulkanManager :: swapChainImageFormat;
+vk::Extent2D vulkanManager :: swapChainExtent;
+std::vector<vk::ImageView> vulkanManager :: swapChainImageViews;
 
 
 void vulkanManager :: initVulkan() {
@@ -47,7 +48,9 @@ void vulkanManager :: initVulkanPipeline(bool initCommandPool) {
 
     vulkanRenderPassManager::initRenderPass();
 
-    vulkanGraphicsPipelineManager::initGraphicsPipeline();
+    std::vector<vulkanShader> shaders{vulkanShader("triangle.frag"), vulkanShader("triangle.vert")};
+    std::cout << "hi" << std::endl;
+    vulkanGraphicsPipelineManager::initGraphicsPipeline(shaders);
 
     vulkanFramebufferManager::initFramebuffer();
 

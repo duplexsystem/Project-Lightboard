@@ -9,31 +9,31 @@
 #include "../Initlization/vulkanSyncManager.h"
 #include "../Utils/vulkanDebugUtils.h"
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 #include <VkBootstrap.h>
+#include <iostream>
 
 void vulkanRender :: pollRender() {
-    vkWaitForFences(vulkanManager::device, 1, &vulkanSyncManager::inFlightFences[vulkanSyncManager::currentFrame], VK_TRUE, UINT64_MAX);
+    vulkanManager::device.waitForFences(1, &vulkanSyncManager::inFlightFences[vulkanSyncManager::currentFrame], VK_TRUE, UINT64_MAX);
 
     uint32_t imageIndex;
-    auto acquireNextImageReturn = vkAcquireNextImageKHR(vulkanManager::device, vulkanManager::swapChain, UINT64_MAX, vulkanSyncManager::imageAvailableSemaphores[vulkanSyncManager::currentFrame], VK_NULL_HANDLE, &imageIndex);
-    if (acquireNextImageReturn == VK_ERROR_OUT_OF_DATE_KHR) {
+    auto acquireNextImageReturn = vulkanManager::device.acquireNextImageKHR(vulkanManager::swapChain, UINT64_MAX, vulkanSyncManager::imageAvailableSemaphores[vulkanSyncManager::currentFrame], nullptr, &imageIndex);
+    if (acquireNextImageReturn == vk::Result::eErrorOutOfDateKHR) {
         vulkanBoilerplateManager::reinitSwapChain();
         return;
-    } else if (acquireNextImageReturn != VK_SUCCESS && acquireNextImageReturn != VK_SUBOPTIMAL_KHR) {
+    } else if (acquireNextImageReturn != vk::Result::eSuccess && acquireNextImageReturn != vk::Result::eSuboptimalKHR) {
         throw std::runtime_error("Failed to Acquire Swap Chain Image. Error:" + std::string(vulkanDebugUtils::to_string(acquireNextImageReturn)) + "\n");
     }
-
-    if (vulkanSyncManager::imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
-        vkWaitForFences(vulkanManager::device, 1, &vulkanSyncManager::imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+    
+    if (vulkanSyncManager::imagesInFlight[imageIndex].operator=(nullptr)) {
+        vulkanManager::device.waitForFences(1, &vulkanSyncManager::imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
     }
     vulkanSyncManager::imagesInFlight[imageIndex] = vulkanSyncManager::inFlightFences[vulkanSyncManager::currentFrame];
 
-    VkSubmitInfo submitInfo{};
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    vk::SubmitInfo submitInfo{};
 
-    VkSemaphore waitSemaphores[] = {vulkanSyncManager::imageAvailableSemaphores[vulkanSyncManager::currentFrame]};
-    VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+    vk::Semaphore waitSemaphores[] = {vulkanSyncManager::imageAvailableSemaphores[vulkanSyncManager::currentFrame]};
+    vk::PipelineStageFlags waitStages[] = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
     submitInfo.waitSemaphoreCount = 1;
     submitInfo.pWaitSemaphores = waitSemaphores;
     submitInfo.pWaitDstStageMask = waitStages;
@@ -41,33 +41,32 @@ void vulkanRender :: pollRender() {
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &vulkanCommandBufferManager::commandBuffers[imageIndex];
 
-    VkSemaphore signalSemaphores[] = {vulkanSyncManager::renderFinishedSemaphores[vulkanSyncManager::currentFrame]};
+    vk::Semaphore signalSemaphores[] = {vulkanSyncManager::renderFinishedSemaphores[vulkanSyncManager::currentFrame]};
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
-    vkResetFences(vulkanManager::device, 1, &vulkanSyncManager::inFlightFences[vulkanSyncManager::currentFrame]);
+    vulkanManager::device.resetFences(1, &vulkanSyncManager::inFlightFences[vulkanSyncManager::currentFrame]);
 
-    auto queueSubmitReturn = vkQueueSubmit(vulkanManager::graphicsQueue, 1, &submitInfo, vulkanSyncManager::inFlightFences[vulkanSyncManager::currentFrame]);
-    if (queueSubmitReturn != VK_SUCCESS) {
+    auto queueSubmitReturn = vulkanManager::graphicsQueue.submit(1, &submitInfo, vulkanSyncManager::inFlightFences[vulkanSyncManager::currentFrame]);
+    if (queueSubmitReturn != vk::Result::eSuccess) {
         throw std::runtime_error("Failed to Draw Command Buffer. Error:" + std::string(vulkanDebugUtils::to_string(queueSubmitReturn)) + "\n");
     }
 
-    VkPresentInfoKHR presentInfo{};
-    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    vk::PresentInfoKHR presentInfo{};
 
     presentInfo.waitSemaphoreCount = 1;
     presentInfo.pWaitSemaphores = signalSemaphores;
 
-    VkSwapchainKHR swapChains[] = {vulkanManager::swapChain};
+    vk::SwapchainKHR swapChains[] = {vulkanManager::swapChain};
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = swapChains;
 
     presentInfo.pImageIndices = &imageIndex;
 
-    auto queuePresentRetrun = vkQueuePresentKHR(vulkanManager::presentQueue, &presentInfo);
-    if (queuePresentRetrun == VK_ERROR_OUT_OF_DATE_KHR || queuePresentRetrun == VK_SUBOPTIMAL_KHR) {
+    auto queuePresentRetrun = vulkanManager::presentQueue.presentKHR(&presentInfo);
+    if (acquireNextImageReturn != vk::Result::eSuccess && acquireNextImageReturn != vk::Result::eSuboptimalKHR) {
         vulkanBoilerplateManager::reinitSwapChain();
-    } else if (queuePresentRetrun != VK_SUCCESS) {
+    } else if (queuePresentRetrun != vk::Result::eSuccess) {
         throw std::runtime_error("Failed to Present Swap Chain Image. Error:" + std::string(vulkanDebugUtils::to_string(queuePresentRetrun)) + "\n");
     }
 

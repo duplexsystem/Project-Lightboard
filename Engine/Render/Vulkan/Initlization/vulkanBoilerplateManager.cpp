@@ -5,8 +5,10 @@
 #include "vulkanBoilerplateManager.h"
 #include "../Utils/vulkanDebugUtils.h"
 #include "../../windowManager.h"
+#include "vulkanGraphicsPipelineManager.h"
 
-#include <vulkan/vulkan.h>
+
+#include <vulkan/vulkan.hpp>
 #include <VkBootstrap.h>
 
 
@@ -60,8 +62,9 @@ void vulkanBoilerplateManager :: initBoilerplate() {
     vulkanManager::instance = vkbInstance.instance;
     vulkanDebugUtils::debugMessenger = vkbInstance.debug_messenger;
 
-    VkResult surfaceReturn = windowManager::initWindowSurface(vulkanManager::instance, vulkanManager::surface);
-    if (surfaceReturn != VK_SUCCESS) {
+    vk::Result surfaceReturn = windowManager::initWindowSurface(vulkanManager::instance,
+                                                              reinterpret_cast<VkSurfaceKHR &>(vulkanManager::surface));
+    if (surfaceReturn != vk::Result::eSuccess) {
         throw std::runtime_error("Failed to create Surface. Error: " + std::string(vulkanDebugUtils::to_string(surfaceReturn)) + "\n");
     }
 
@@ -120,14 +123,19 @@ void vulkanBoilerplateManager :: initBoilerplate() {
     }
     vkbSwapChain = swapChainReturn.value();
     initImageViews();
+
+    //Create Pipeline Cache
+    vk::PipelineCacheCreateInfo pipelineCacheInfo{};
+    vulkanGraphicsPipelineManager::pipelineCache = vulkanManager::device.createPipelineCache(pipelineCacheInfo);
 }
+
 
 void vulkanBoilerplateManager :: reinitSwapChain() {
     windowManager::waitWhileMinimized();
 
     vulkanManager::cleanupVulkanPipeline();
 
-    vkbSwapChain.destroy_image_views(vulkanManager::swapChainImageViews);
+    vkbSwapChain.destroy_image_views(reinterpret_cast<std::vector<VkImageView> &>(vulkanManager::swapChainImageViews));
 
     vkb::SwapchainBuilder swapchain_builder{vkbDevice};
     auto swap_ret = swapchain_builder.set_old_swapchain(vkbSwapChain)
@@ -149,7 +157,7 @@ void vulkanBoilerplateManager :: reinitSwapChain() {
 }
 
 void vulkanBoilerplateManager :: cleanupBoilerplate() {
-    vkbSwapChain.destroy_image_views(vulkanManager::swapChainImageViews);
+    vkbSwapChain.destroy_image_views(reinterpret_cast<std::vector<VkImageView> &>(vulkanManager::swapChainImageViews));
 
     vkb::destroy_swapchain(vkbSwapChain);
 
@@ -163,8 +171,8 @@ void vulkanBoilerplateManager :: cleanupBoilerplate() {
 
 void vulkanBoilerplateManager :: initImageViews() {
     vulkanManager::swapChain = vkbSwapChain.swapchain;
-    vulkanManager::swapChainImages = vkbSwapChain.get_images().value();
-    vulkanManager::swapChainImageFormat = vkbSwapChain.image_format;
+    vulkanManager::swapChainImages = reinterpret_cast<std::vector<vk::Image> &>(vkbSwapChain.get_images().value());
+    vulkanManager::swapChainImageFormat = static_cast<vk::Format>(vkbSwapChain.image_format);
     vulkanManager::swapChainExtent = vkbSwapChain.extent;
-    vulkanManager::swapChainImageViews = vkbSwapChain.get_image_views().value();
+    vulkanManager::swapChainImageViews = reinterpret_cast<std::vector<vk::ImageView> &>(vkbSwapChain.get_image_views().value());
 }

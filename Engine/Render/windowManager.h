@@ -8,6 +8,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <cstdint>
+#include <vulkan/vulkan.hpp>
 
 class windowManager {
     public:
@@ -25,7 +26,7 @@ class windowManager {
 
         static const char** getWindowExtents(uint32_t &glfwExtensionCount);
 
-        static VkResult initWindowSurface(VkInstance instance, VkSurfaceKHR &surface);
+        static vk::Result initWindowSurface(VkInstance instance, VkSurfaceKHR &surface);
 
         static void pollWindow();
 

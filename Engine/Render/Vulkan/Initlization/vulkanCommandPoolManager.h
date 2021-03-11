@@ -5,11 +5,11 @@
 #ifndef PROJECT_LIGHTBOARD_VULKANCOMMANDPOOLMANAGER_H
 #define PROJECT_LIGHTBOARD_VULKANCOMMANDPOOLMANAGER_H
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 class vulkanCommandPoolManager {
     public:
-        static VkCommandPool commandPool;
+        static vk::CommandPool commandPool;
 
         static void initCommandPool();
 
