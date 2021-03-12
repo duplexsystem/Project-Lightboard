@@ -49,8 +49,13 @@ void vulkanManager :: initVulkanPipeline(bool initCommandPool) {
     vulkanRenderPassManager::initRenderPass();
 
     std::vector<vulkanShader> shaders{vulkanShader("triangle.frag"), vulkanShader("triangle.vert")};
-    std::cout << "hi" << std::endl;
+
     vulkanGraphicsPipelineManager::initGraphicsPipeline(shaders);
+
+    for (vulkanShader shader : shaders) {
+        device.destroyShaderModule(shader.shaderModule, nullptr);
+    }
+    shaders.clear(); //TODO MEMORY LEAK
 
     vulkanFramebufferManager::initFramebuffer();
 

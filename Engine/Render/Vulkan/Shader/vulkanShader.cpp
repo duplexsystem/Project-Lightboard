@@ -21,8 +21,9 @@ vulkanShader :: vulkanShader(std::string name) {
     } else {
         throw std::runtime_error("Shader " + name + "has an invalid extension");
     }
+    shaderModule = getShader(shaderName);
 
-    shader = createShader(getShader(shaderName), shaderType);
+    shader = createShader(shaderModule, shaderType);
 }
 
 vk::ShaderModule vulkanShader :: getShader(const std::string& filename) {

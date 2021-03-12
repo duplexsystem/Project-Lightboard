@@ -18,6 +18,8 @@ class vulkanShader {
 
         vk::PipelineShaderStageCreateInfo shader;
 
+        vk::ShaderModule shaderModule;
+
         vulkanShader(std::string name);
 
     private:
