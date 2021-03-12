@@ -65,7 +65,7 @@ void vulkanRender :: pollRender() {
     presentInfo.pImageIndices = &imageIndex;
 
     auto queuePresentRetrun = vulkanManager::presentQueue.presentKHR(&presentInfo);
-    if (acquireNextImageReturn != vk::Result::eSuccess && acquireNextImageReturn != vk::Result::eSuboptimalKHR || windowManager::framebufferResized) {
+    if (queuePresentRetrun == vk::Result::eSuboptimalKHR || queuePresentRetrun == vk::Result::eErrorOutOfDateKHR || windowManager::framebufferResized) {
         windowManager::framebufferResized = false;
         vulkanBoilerplateManager::reinitSwapChain();
     } else if (queuePresentRetrun != vk::Result::eSuccess) {
