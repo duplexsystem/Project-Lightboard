@@ -8,6 +8,7 @@
 #include "../Initlization/vulkanCommandBufferManager.h"
 #include "../Initlization/vulkanSyncManager.h"
 #include "../Utils/vulkanDebugUtils.h"
+#include "../../windowManager.h"
 
 #include <vulkan/vulkan.hpp>
 #include <VkBootstrap.h>
@@ -24,7 +25,7 @@ void vulkanRender :: pollRender() {
     } else if (acquireNextImageReturn != vk::Result::eSuccess && acquireNextImageReturn != vk::Result::eSuboptimalKHR) {
         throw std::runtime_error("Failed to Acquire Swap Chain Image. Error:" + std::string(vulkanDebugUtils::to_string(acquireNextImageReturn)) + "\n");
     }
-    
+
     if (vulkanSyncManager::imagesInFlight[imageIndex].operator=(nullptr)) {
         vulkanManager::device.waitForFences(1, &vulkanSyncManager::imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
     }
@@ -64,7 +65,8 @@ void vulkanRender :: pollRender() {
     presentInfo.pImageIndices = &imageIndex;
 
     auto queuePresentRetrun = vulkanManager::presentQueue.presentKHR(&presentInfo);
-    if (acquireNextImageReturn != vk::Result::eSuccess && acquireNextImageReturn != vk::Result::eSuboptimalKHR) {
+    if (acquireNextImageReturn != vk::Result::eSuccess && acquireNextImageReturn != vk::Result::eSuboptimalKHR || windowManager::framebufferResized) {
+        windowManager::framebufferResized = false;
         vulkanBoilerplateManager::reinitSwapChain();
     } else if (queuePresentRetrun != vk::Result::eSuccess) {
         throw std::runtime_error("Failed to Present Swap Chain Image. Error:" + std::string(vulkanDebugUtils::to_string(queuePresentRetrun)) + "\n");
