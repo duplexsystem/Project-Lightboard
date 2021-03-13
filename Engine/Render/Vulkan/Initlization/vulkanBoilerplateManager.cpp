@@ -157,6 +157,8 @@ void vulkanBoilerplateManager :: reinitSwapChain() {
 }
 
 void vulkanBoilerplateManager :: cleanupBoilerplate() {
+    vkDestroyPipelineCache(vulkanManager::device, vulkanGraphicsPipelineManager::pipelineCache, nullptr);
+
     vkbSwapChain.destroy_image_views(reinterpret_cast<std::vector<VkImageView> &>(vulkanManager::swapChainImageViews));
 
     vkb::destroy_swapchain(vkbSwapChain);

@@ -8,7 +8,7 @@
 
 #include <vulkan/vulkan.hpp>
 #include <string>
-
+#include <iostream>
 
 
 vulkanShader :: vulkanShader(std::string name) {
@@ -19,11 +19,22 @@ vulkanShader :: vulkanShader(std::string name) {
     } else if (name.ends_with(".frag")) {
         shaderType = vk::ShaderStageFlagBits::eFragment;
     } else {
-        throw std::runtime_error("Shader " + name + "has an invalid extension");
+        throw std::runtime_error("Shader " + name + " has an invalid extension");
     }
+
     shaderModule = getShader(shaderName);
 
     shader = createShader(shaderModule, shaderType);
+}
+
+vulkanShader :: ~vulkanShader() {
+    if (cleanup) {
+        vulkanManager::device.destroyShaderModule(shaderModule, nullptr);
+    }
+}
+
+void vulkanShader :: markForCleanup() {
+    cleanup = true;
 }
 
 vk::ShaderModule vulkanShader :: getShader(const std::string& filename) {

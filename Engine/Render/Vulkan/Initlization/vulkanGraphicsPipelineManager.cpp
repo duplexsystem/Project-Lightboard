@@ -15,7 +15,7 @@ vk::PipelineLayout vulkanGraphicsPipelineManager :: pipelineLayout;
 
 vk::Pipeline vulkanGraphicsPipelineManager :: graphicsPipeline;
 
-void vulkanGraphicsPipelineManager :: initGraphicsPipeline(std::vector<vulkanShader> shaderVector) {
+void vulkanGraphicsPipelineManager :: initGraphicsPipeline(std::vector<vulkanShader> &shaderVector) {
         std::vector<vk::PipelineShaderStageCreateInfo> shaderVectorShaders;
         for (vulkanShader shader : shaderVector) {
             shaderVectorShaders.push_back(shader.shader);

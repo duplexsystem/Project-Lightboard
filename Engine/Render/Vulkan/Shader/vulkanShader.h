@@ -22,7 +22,13 @@ class vulkanShader {
 
         vulkanShader(std::string name);
 
+        ~vulkanShader();
+
+        void markForCleanup();
+
     private:
+        bool cleanup = false;
+
         vk::ShaderModule getShader(const std::string& filename);
 
         static vk::PipelineShaderStageCreateInfo createShader(vk::ShaderModule shaderModule, vk::ShaderStageFlagBits shaderStage);

@@ -26,9 +26,9 @@ void vulkanRender :: pollRender() {
         throw std::runtime_error("Failed to Acquire Swap Chain Image. Error:" + std::string(vulkanDebugUtils::to_string(acquireNextImageReturn)) + "\n");
     }
 
-    if (vulkanSyncManager::imagesInFlight[imageIndex].operator=(nullptr)) {
+    if (((VkFence)vulkanSyncManager::imagesInFlight[imageIndex]) != VK_NULL_HANDLE) {
         vulkanManager::device.waitForFences(1, &vulkanSyncManager::imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
-    }
+   }
     vulkanSyncManager::imagesInFlight[imageIndex] = vulkanSyncManager::inFlightFences[vulkanSyncManager::currentFrame];
 
     vk::SubmitInfo submitInfo{};

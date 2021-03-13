@@ -18,7 +18,7 @@ class vulkanGraphicsPipelineManager {
 
         static vk::Pipeline graphicsPipeline;
 
-        static void initGraphicsPipeline(std::vector<vulkanShader> shaderVector);
+        static void initGraphicsPipeline(std::vector<vulkanShader> &shaderVector);
 
         static void cleanupGraphicsPipeline();
 };

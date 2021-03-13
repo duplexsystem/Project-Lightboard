@@ -1,4 +1,5 @@
 #include <iostream>
+#include <Engine/Math/fastMath.h>
 #include "Render/renderManager.h"
 
 void init() {
@@ -14,7 +15,6 @@ void cleanup() {
 }
 
 int main() {
-
     try {
         init();
         poll();

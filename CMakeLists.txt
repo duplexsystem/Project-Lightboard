@@ -64,8 +64,7 @@ file(GLOB_RECURSE ENGINE_SOURCE CONFIGURE_DEPENDS
         "Engine/*.cpp"
         "Engine/*.hpp"
         )
-add_executable(Project_LightBoard ${ENGINE_SOURCE} Engine/Render/Vulkan/Shader/vulkanShader.cpp Engine/Render/Vulkan/Shader/vulkanShader.h)
-
+add_executable(Project_LightBoard ${ENGINE_SOURCE})
 #Compile and Include Shaders
 include("${CMAKE_CURRENT_SOURCE_DIR}/Modules/CompileShaders.cmake")
 add_dependencies(Project_LightBoard Shaders)
