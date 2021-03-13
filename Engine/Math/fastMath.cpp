@@ -6,22 +6,34 @@
 #include "consts.h"*
 
 float fastMath :: fastRangedLerp(int x, int y, int a) {
-    float rangedPram = ((static_cast<float>(a))/(consts::pow10[(fastLog10(a)+1)]));
+    double xx = x >= 0 ? x * 2 : x * -2 - 1;
+    double yy = y >= 0 ? y * 2 : y * -2 - 1;
+    double key = ((xx >= yy) ? (xx * xx + xx + yy) : (yy * yy + xx)+a);
+    float rangedPram = ((static_cast<float>(key))/(consts::pow10[(fastLog10(key)+1)]));
     return fastLerp(x, y, rangedPram);
 }
 
 float fastMath :: fastRangedLerp(long x, long y, long a) {
-    float rangedPram = ((static_cast<float>(a))/(consts::pow10[(fastLog10(a)+1)]) + ((static_cast<float>(a)/10000000000000000000)/10));
+    double xx = x >= 0 ? x * 2 : x * -2 - 1;
+    double yy = y >= 0 ? y * 2 : y * -2 - 1;
+    double key = ((xx >= yy) ? (xx * xx + xx + yy) : (yy * yy + xx)+a);
+    float rangedPram = ((static_cast<float>(key))/(consts::pow10[(fastLog10(key)+1)]));
     return fastLerp(x, y, rangedPram);
 }
 
 float fastMath :: fastRangedLerp(double x, double y, double a) {
-    float rangedPram = ((static_cast<float>(a))/(consts::pow10[(fastLog10(a)+1)]) + ((static_cast<float>(a)/10000000000000000000)/10));
+    double xx = x >= 0 ? x * 2 : x * -2 - 1;
+    double yy = y >= 0 ? y * 2 : y * -2 - 1;
+    double key = ((xx >= yy) ? (xx * xx + xx + yy) : (yy * yy + xx)+a);
+    float rangedPram = ((static_cast<float>(key))/(consts::pow10[(fastLog10(key)+1)]));
     return fastLerp(x, y, rangedPram);
 }
 
 float fastMath :: fastRangedLerp(float x, float y, float a) {
-    float rangedPram = ((static_cast<float>(a))/(consts::pow10[(fastLog10(a)+1)]) + ((static_cast<float>(a)/10000000000000000000)/10));
+    double xx = x >= 0 ? x * 2 : x * -2 - 1;
+    double yy = y >= 0 ? y * 2 : y * -2 - 1;
+    double key = ((xx >= yy) ? (xx * xx + xx + yy) : (yy * yy + xx)+a);
+    float rangedPram = ((static_cast<float>(key))/(consts::pow10[(fastLog10(key)+1)]));
     return fastLerp(x, y, rangedPram);
 }
 

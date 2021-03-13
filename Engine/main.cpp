@@ -15,14 +15,15 @@ void cleanup() {
 }
 
 int main() {
-    try {
-        init();
-        poll();
-        cleanup();
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
+    std::cout << fastMath::fastRangedLerp(0l, 1l, 5657567567567l) << std::endl;
+//    try {
+//        init();
+//        poll();
+//        cleanup();
+//    } catch (const std::exception& e) {
+//        std::cerr << e.what() << std::endl;
+//        return EXIT_FAILURE;
+//    }
 
     return EXIT_SUCCESS;
 }
