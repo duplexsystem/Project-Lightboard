@@ -16,13 +16,7 @@ class fastMath {
 
         static float fastRangedLerp(double x, double y, double a);
 
-        static int fastLog10 (int x);
-
-        static int fastLog10 (long x);
-
-        static int fastLog10 (float  x);
-
-        static int fastLog10 (double x);
+        static int getDigitsInNumber (long x);
 
         static float fastLerp(int a, int b, float f);
 

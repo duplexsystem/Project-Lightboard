@@ -1,5 +1,8 @@
 #include <iostream>
 #include <Engine/Math/fastMath.h>
+#include <bitset>
+#include <cmath>
+
 #include "Render/renderManager.h"
 
 void init() {
@@ -15,7 +18,6 @@ void cleanup() {
 }
 
 int main() {
-    std::cout << fastMath::fastRangedLerp(0l, 1l, 5657567567567l) << std::endl;
 //    try {
 //        init();
 //        poll();
@@ -24,6 +26,10 @@ int main() {
 //        std::cerr << e.what() << std::endl;
 //        return EXIT_FAILURE;
 //    }
+
+    for (int i = 0; i < 20000; i++) {
+        std::cout << i << std::endl << fastMath::getDigitsInNumber(i) << std::endl << std::endl;
+    }
 
     return EXIT_SUCCESS;
 }

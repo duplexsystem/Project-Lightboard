@@ -19,3 +19,5 @@ cmake-build-minsizerel/
 cmake-build-default/
 
 cmake-build-debug/
+
+cmake-build-debug-coverage/

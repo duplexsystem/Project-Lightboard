@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(Project_LightBoard)
 
+set(CMAKE_CXX_STANDARD 20)
+
 #CCache
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
@@ -9,8 +11,50 @@ if(CCACHE_FOUND)
     message(STATUS "Using Ccache")
 endif(CCACHE_FOUND)
 
+#Round 2 of compiler stuff because cmake is broke af
+#Use Clang or AOCC if available
+find_program(AOCC_FOUND /opt/AMD/aocc-compiler-3.0.0/bin/clangg)
+find_program(CLANG_FOUND clang)
+if(AOCC_FOUND)
+    SET(CMAKE_C_COMPILER "${AOCC_FOUND}" CACHE BOOL "" FORCE)
+    SET(CMAKE_C_COMPILER_ID "Clang" CACHE BOOL "" FORCE)
+    SET(CMAKE_C_COMPILER_VERSION 12.0.0 CACHE BOOL "" FORCE)
+elseif(CLANG_FOUND)
+    SET (CMAKE_C_COMPILER "${CLANG_FOUND}" CACHE BOOL "" FORCE)
+endif()
+find_program(AOCCPP_FOUND /opt/AMD/aocc-compiler-3.0.0/bin/clang++g)
+find_program(CLANGPP_FOUND clang++)
+if(AOCC_FOUND)
+    SET(CMAKE_CXX_COMPILER "${AOCCPP_FOUND}" CACHE BOOL "" FORCE)
+    SET(CMAKE_CXX_COMPILER_ID "Clang" CACHE BOOL "" FORCE)
+    SET(CMAKE_CXX_COMPILER_VERSION 12.0.0 CACHE BOOL "" FORCE)
+    #hacky shit because cmake has bad custom compiler support
+    #C++11
+    SET(CMAKE_CXX11_STANDARD_COMPILE_OPTION "-std=c++11" CACHE BOOL "" FORCE)
+    SET(CMAKE_CXX11_EXTENSION_COMPILE_OPTION "-std=gnu++11" CACHE BOOL "" FORCE)
+    list(APPEND CMAKE_CXX11_COMPILE_FEATURES cxx_std_11)
+    SET(CMAKE_CXX_COMPILE_FEATURES ${CMAKE_CXX_COMPILE_FEATURES} "${CMAKE_CXX11_COMPILE_FEATURES}" CACHE BOOL "" FORCE)
+    #C++14
+    SET(CMAKE_CXX14_STANDARD_COMPILE_OPTION "-std=c++14" CACHE BOOL "" FORCE)
+    SET(CMAKE_CXX14_EXTENSION_COMPILE_OPTION "-std=gnu++14" CACHE BOOL "" FORCE)
+    list(APPEND CMAKE_CXX14_COMPILE_FEATURES cxx_std_14)
+    SET(CMAKE_CXX_COMPILE_FEATURES ${CMAKE_CXX_COMPILE_FEATURES} "${CMAKE_CXX14_COMPILE_FEATURES}" CACHE BOOL "" FORCE)
+    #C++17
+    set(CMAKE_CXX17_STANDARD_COMPILE_OPTION "-std=c++17" CACHE BOOL "" FORCE)
+    set(CMAKE_CXX17_EXTENSION_COMPILE_OPTION "-std=gnu++17" CACHE BOOL "" FORCE)
+    list(APPEND CMAKE_CXX17_COMPILE_FEATURES cxx_std_17)
+    set(CMAKE_CXX_COMPILE_FEATURES ${CMAKE_CXX_COMPILE_FEATURES} "${CMAKE_CXX17_COMPILE_FEATURES}" CACHE BOOL "" FORCE)
+    #C++20
+    set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std=c++20" CACHE BOOL "" FORCE)
+    set(CMAKE_CXX20_EXTENSION_COMPILE_OPTION "-std=gnu++20" CACHE BOOL "" FORCE)
+    list(APPEND CMAKE_CXX20_COMPILE_FEATURES cxx_std_20)
+    set(CMAKE_CXX_COMPILE_FEATURES ${CMAKE_CXX_COMPILE_FEATURES} "${CMAKE_CXX20_COMPILE_FEATURES}" CACHE BOOL "" FORCE)
+    #end hacky shit
+elseif(CLANG_FOUND)
+    SET (CMAKE_CXX_COMPILER "${CLANGPP_FOUND}" CACHE BOOL "" FORCE)
+endif()
+
 #Compiler Options
-set(CMAKE_CXX_STANDARD 20)
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     if(CMAKE_BUILD_TYPE MATCHES Debug)
         string(APPEND CMAKE_C_FLAGS " -O0 -g")
@@ -27,6 +71,12 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID 
     if(CMAKE_BUILD_TYPE MATCHES MinSizeRel)
         string(APPEND CMAKE_C_FLAGS " -Os -DNDEBUG -fmerge-all-constants -fomit-frame-pointer -flto")
         string(APPEND CMAKE_CXX_FLAGS " -Os -DNDEBUG -fmerge-all-constants -fomit-frame-pointer  -flto")
+    endif()
+    #[[ The camke docs state "If the use of the feature requires an additional compiler flag, such as -std=gnu++11, the flag will be added automatically."
+    you see now that's some bullshit because it just doesn't do that if your using a custom compiler
+    ]]#
+    if(AOCC_FOUND)
+        string(APPEND CMAKE_CXX_FLAGS " -std=c++20")
     endif()
 endif()
 
@@ -77,7 +127,6 @@ add_custom_command(TARGET Project_LightBoard POST_BUILD
 set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_DEBUG "DEBUG")
 
 
-
 #---------------------------Rendering------------------------
 #GLM
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Libs/glm)
@@ -103,14 +152,3 @@ target_link_libraries(Project_LightBoard vk-bootstrap)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator)
 target_link_libraries(Project_LightBoard VulkanMemoryAllocator)
 
-#Vulkan Memory Allocator Hpp
-#file(GLOB_RECURSE VulkanMemoryAllocator_Hpp_SOURCE CONFIGURE_DEPENDS
-#        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.h"
-#        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.cpp"
-#        "${CMAKE_CURRENT_SOURCE_DIR}/Libs/VulkanMemoryAllocator-Hpp/*.hpp"
-#        )
-#add_library(VulkanMemoryAllocator-Hpp INTERFACE)
-#target_sources(VulkanMemoryAllocator-Hpp INTERFACE ${VulkanMemoryAllocator_Hpp_SOURCE})
-#target_link_libraries(Project_LightBoard VulkanMemoryAllocator-Hpp)
-
-#Vookoo
