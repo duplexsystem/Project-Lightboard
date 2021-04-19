@@ -10,9 +10,12 @@
 
 class consts {
     public:
-        const static int longsize = sizeof(long)*CHAR_BIT;
+        const static int intsize = sizeof(int)*CHAR_BIT;
 
-        constexpr const static unsigned long long pow10[20] = {
+        const static long longsize = sizeof(long)*CHAR_BIT;
+
+        constexpr const static long long pow10[20] = {
+            0,
             1,
             10,
             100,
@@ -31,8 +34,7 @@ class consts {
             1000000000000000,
             10000000000000000,
             100000000000000000,
-            1000000000000000000,
-            10000000000000000000,
+            1000000000000000000
         };
 
     constexpr const static int mindigits[65] = {
